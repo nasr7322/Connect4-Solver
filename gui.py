@@ -12,7 +12,7 @@ def relative_to_assets(path: str) -> Path:
 
 
 window = Tk()
-
+Player = 1
 window.geometry("800x500")
 window.configure(bg = "#FFFFFF")
 
@@ -26,8 +26,9 @@ canvas = Canvas(
     highlightthickness = 0,
     relief = "ridge"
 )
-
 canvas.place(x = 0, y = 0)
+
+## background elements
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
@@ -52,21 +53,21 @@ image_3 = canvas.create_image(
     image=image_image_3
 )
 
+## board base
 image_image_4 = PhotoImage(
     file=relative_to_assets("image_4.png"))
 image_4 = canvas.create_image(
-    400,
-    289,
+    399,
+    292,
     image=image_image_4
 )
 
 yellowPiece = PhotoImage(
     file=relative_to_assets("image_5.png"))
-
 redPiece = PhotoImage(
     file=relative_to_assets("image_6.png"))
 
-
+##Plater names
 canvas.create_text(
     53.0,
     25.0,
@@ -75,25 +76,34 @@ canvas.create_text(
     fill="#000000",
     font=("Inter Bold", 32 * -1)
 )
-
 canvas.create_text(
-    621.0,
+    747.0,
     25.0,
-    anchor="nw",
-    text="Player 2",
+    anchor="ne",
+    text="Player 2 (AI)",
     fill="#000000",
     font=("Inter Bold", 32 * -1)
 )
 
-canvas.create_text(
+## turn indicator
+turn_indicator = canvas.create_text(
     355.0,
     43.0,
     anchor="nw",
-    text="Player 2 ‘s turn",
+    text="Player " + str(Player) + " ‘s turn",
     fill="#000000",
     font=("Inter", 13 * -1)
 )
+## color flag indicator
+flag = canvas.create_rectangle(
+    355.0,
+    65.0,
+    446.0,
+    71.0,
+    fill="#FF9D00" if Player == 1 else "#D01466",
+    outline="")
 
+##player 1's score flag
 canvas.create_text(
     53.0,
     71.0,
@@ -102,7 +112,7 @@ canvas.create_text(
     fill="#000000",
     font=("Inter Light", 13 * -1)
 )
-
+##player 2's score flag
 canvas.create_text(
     688.0,
     71.0,
@@ -112,6 +122,15 @@ canvas.create_text(
     font=("Inter Light", 13 * -1)
 )
 
+##player 2's color flag
+canvas.create_rectangle(
+    757.0,
+    25.0,
+    800.0,
+    87.0,
+    fill="#D01466",
+    outline="")
+##player 1's color flag
 canvas.create_rectangle(
     0.0,
     25.0,
@@ -120,38 +139,16 @@ canvas.create_rectangle(
     fill="#FF9D00",
     outline="")
 
-canvas.create_rectangle(
-    355.0,
-    65.0,
-    446.0,
-    71.0,
-    fill="#D01466",
-    outline="")
-
-canvas.create_rectangle(
-    757.0,
-    25.0,
-    800.0,
-    87.0,
-    fill="#D01466",
-    outline="")
-
-def insertPiece(Col):
-    Player = 1
-    Row = 2
-    if Player == 1:
-        canvas.create_image(
-            270+43*Col,
-            400-43*Row,
-            image=yellowPiece
-        )
-    else:
-        canvas.create_image(
-            154.0,
-            272.0,
-            image=yellowPiece
-        )
-    
+def insertPiece(Col, Row=5):
+    global Player
+    canvas.create_image(
+        270+43*Col,
+        400-43*Row,
+        image=yellowPiece if Player == 1 else redPiece,
+    )
+    Player = 2 if Player == 1 else 1
+    canvas.itemconfig(turn_indicator, text="Player " + str(Player) + " ‘s turn")
+    canvas.itemconfig(flag, fill="#FF9D00" if Player == 1 else "#D01466")
 
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))
