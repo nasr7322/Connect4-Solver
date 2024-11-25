@@ -17,7 +17,7 @@ Player = 1 ## innitial player - change if u want ai to start first
 window.geometry("800x500")
 window.configure(bg = "#FFFFFF")
 
-def insertPiece(Col, Row=0):
+def insertPiece(Col,Row=0,s1=8,s2=11):
     global Player
     canvas.create_image(
         270+43*Col,
@@ -27,6 +27,8 @@ def insertPiece(Col, Row=0):
     Player = 2 if Player == 1 else 1
     canvas.itemconfig(turn_indicator, text="Player " + str(Player) + " ‘s turn")
     canvas.itemconfig(flag, fill="#FF9D00" if Player == 1 else "#D01466")
+    canvas.itemconfig(score1, text="Score: "+str(s1))
+    canvas.itemconfig(score2, text="Score: "+str(s2))
 
 canvas = Canvas(
     window,
@@ -115,7 +117,7 @@ flag = canvas.create_rectangle(
     outline="")
 
 ##player 1's score flag
-canvas.create_text(
+score1=canvas.create_text(
     53.0,
     71.0,
     anchor="nw",
@@ -124,7 +126,7 @@ canvas.create_text(
     font=("Inter Light", 13 * -1)
 )
 ##player 2's score flag
-canvas.create_text(
+score2=canvas.create_text(
     688.0,
     71.0,
     anchor="nw",
