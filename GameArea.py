@@ -14,21 +14,32 @@ def relative_to_assets(path: str) -> Path:
 window = Tk()
 window.title("Game Area")
 Player = 1 ## innitial player - change if u want ai to start first
+s1=0
+s2=0
 window.geometry("800x500")
 window.configure(bg = "#FFFFFF")
 
-def insertPiece(Col,Row=0,s1=8,s2=11):
-    global Player
+def updateGui(Col,Row,p,s1,s2): ##add player as input
     canvas.create_image(
         270+43*Col,
         400-43*Row,
         image=yellowPiece if Player == 1 else redPiece,
     )
-    Player = 2 if Player == 1 else 1
-    canvas.itemconfig(turn_indicator, text="Player " + str(Player) + " ‘s turn")
-    canvas.itemconfig(flag, fill="#FF9D00" if Player == 1 else "#D01466")
+    canvas.itemconfig(turn_indicator, text="Player " + str(p) + " ‘s turn")
+    canvas.itemconfig(flag, fill="#FF9D00" if p == 1 else "#D01466")
     canvas.itemconfig(score1, text="Score: "+str(s1))
     canvas.itemconfig(score2, text="Score: "+str(s2))
+    
+def insertPiece(col):
+    ## update backend and get player turn and scores
+    global Player,s1,s2
+    ## calculate row to insert
+    row = 2
+    ##call the updateGui with parameters
+    Player = 2 if Player == 1 else 1
+    s1+=1
+    s2+=1
+    updateGui(col,row,Player,s1,s2)
 
 canvas = Canvas(
     window,
