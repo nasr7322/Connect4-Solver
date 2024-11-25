@@ -17,6 +17,16 @@ Player = 1 ## innitial player - change if u want ai to start first
 window.geometry("800x500")
 window.configure(bg = "#FFFFFF")
 
+def insertPiece(Col, Row=0):
+    global Player
+    canvas.create_image(
+        270+43*Col,
+        400-43*Row,
+        image=yellowPiece if Player == 1 else redPiece,
+    )
+    Player = 2 if Player == 1 else 1
+    canvas.itemconfig(turn_indicator, text="Player " + str(Player) + " ‘s turn")
+    canvas.itemconfig(flag, fill="#FF9D00" if Player == 1 else "#D01466")
 
 canvas = Canvas(
     window,
@@ -139,17 +149,6 @@ canvas.create_rectangle(
     87.0,
     fill="#FF9D00",
     outline="")
-
-def insertPiece(Col, Row=5):
-    global Player
-    canvas.create_image(
-        270+43*Col,
-        400-43*Row,
-        image=yellowPiece if Player == 1 else redPiece,
-    )
-    Player = 2 if Player == 1 else 1
-    canvas.itemconfig(turn_indicator, text="Player " + str(Player) + " ‘s turn")
-    canvas.itemconfig(flag, fill="#FF9D00" if Player == 1 else "#D01466")
 
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))

@@ -19,6 +19,11 @@ window.title("Main Menu")
 window.geometry("800x500")
 window.configure(bg = "#FFFFFF")
 
+def selectOption(option):
+    ## option =1 for alph beta
+    ## option =0 for no alpha beta
+    print(option)
+    window.destroy()
 
 canvas = Canvas(
     window,
@@ -94,12 +99,6 @@ button_2.place(
     width=123.0,
     height=28.0
 )
-
-def selectOption(option):
-    ## option =1 for alph beta
-    ## option =0 for no alpha beta
-    print(option)
-    window.destroy()
     
 window.resizable(False, False)
 window.mainloop()
