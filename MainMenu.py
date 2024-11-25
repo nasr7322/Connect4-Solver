@@ -14,6 +14,7 @@ def relative_to_assets(path: str) -> Path:
 
 
 window = Tk()
+window.title("Main Menu")
 
 window.geometry("800x500")
 window.configure(bg = "#FFFFFF")
@@ -68,7 +69,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_1 clicked"),
+    command=lambda: selectOption(1),
     relief="flat"
 )
 button_1.place(
@@ -84,7 +85,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_2 clicked"),
+    command=lambda: selectOption(0),
     relief="flat"
 )
 button_2.place(
@@ -93,5 +94,12 @@ button_2.place(
     width=123.0,
     height=28.0
 )
+
+def selectOption(option):
+    ## option =1 for alph beta
+    ## option =0 for no alpha beta
+    print(option)
+    window.destroy()
+    
 window.resizable(False, False)
 window.mainloop()

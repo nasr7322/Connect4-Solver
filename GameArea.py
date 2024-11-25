@@ -12,7 +12,8 @@ def relative_to_assets(path: str) -> Path:
 
 
 window = Tk()
-Player = 1
+window.title("Game Area")
+Player = 1 ## innitial player - change if u want ai to start first
 window.geometry("800x500")
 window.configure(bg = "#FFFFFF")
 
