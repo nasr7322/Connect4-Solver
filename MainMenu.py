@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from tkinter import Tk, Canvas, Button, PhotoImage
+from tkinter import Tk, Canvas, Button, PhotoImage, Entry
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -20,14 +20,24 @@ window.geometry("800x500")
 window.configure(bg = "#FFFFFF")
 
 def selectOption(option):
+    global k
     ## option =1 for alph beta
     ## option =0 for no alpha beta
-    print(option)
-    window.destroy()
-
+    if(entry_k.get() == ""):
+        print("Enter a value for K")
+        return
+    k = int(entry_k.get())
+    print(k)
+    
+    if(k>0):
+        print(option)
+        window.destroy()
+    else:
+        print("Enter a value for K")
+        
 canvas = Canvas(
     window,
-    bg = "#FFFFFF",
+    bg = "#F0F0F0",
     height = 500,
     width = 800,
     bd = 0,
@@ -55,7 +65,7 @@ image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
     400.0,
-    249.0,
+    260.0,
     image=image_image_2
 )
 
@@ -79,7 +89,7 @@ button_1 = Button(
 )
 button_1.place(
     x=339.0,
-    y=250.0,
+    y=240,
     width=123.0,
     height=28.0
 )
@@ -95,10 +105,33 @@ button_2 = Button(
 )
 button_2.place(
     x=339.0,
-    y=289.0,
+    y=279.0,
     width=123.0,
     height=28.0
 )
-    
+
+## text area for the user to enter a variable K
+k=-1
+entry_k = Entry(
+    bd=0,
+    bg="#FFFFFF",
+    highlightthickness=0
+)
+entry_k.place(
+    x=389.0,
+    y=315.0,
+    width=70,
+    height=20
+)
+text_1 = canvas.create_text(
+    339.0,
+    315.0,
+    anchor="nw",
+    text="K value: ",
+    fill="#000000",
+    font=("Inter Light", 13 * -1)
+)
+
+
 window.resizable(False, False)
 window.mainloop()
