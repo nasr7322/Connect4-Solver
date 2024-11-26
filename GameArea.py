@@ -22,7 +22,7 @@ def updateGui(p,s1,s2): ##updates player's turn and scores
     canvas.itemconfig(score1, text="Score: "+str(s1))
     canvas.itemconfig(score2, text="Score: "+str(s2))
     
-def drawPiece(col,row,p):
+def drawPiece(col,row,p): ##draws the piece on the board
     canvas.create_image(
         270+43*col,
         400-43*row,

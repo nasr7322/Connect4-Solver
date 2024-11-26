@@ -1,6 +1,5 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage, Entry
-from GameArea import window as game_area_window, setStartingPlayer
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"E:\21011054\Fall 2024\AI\Lab 2\build\assets\frame1")
@@ -16,7 +15,7 @@ window.configure(bg = "#FFFFFF")
 
 k = -1
 Ai = -1
-startPlayer = 1
+startPlayer = -1
 
 def selectOption(option):
     global k, Ai, startPlayer
@@ -26,17 +25,23 @@ def selectOption(option):
     if (starter.get() == "" or starter.get().isnumeric() == False):
         print("Enter a value for Starting Player")
         return
+    
     k = int(entry_k.get())
+    ## k is the depth of the minimax tree
+    
     Ai = option
-    ## option =2 for Expected Minimax
+    ## option =0 for normal minimax
     ## option =1 for alph beta
-    ## option =0 for no alpha beta
+    ## option =2 for Expected Minimax
+
     startPlayer = int(starter.get())
-    ## startPlayer = 1 for player 1
-    ## startPlayer = 2 for player 2
+    ## startPlayer = 1 for player 1 (AI)
+    ## startPlayer = 2 for player 2 (Human)
+    
     if (k > 0 and startPlayer > 0 and startPlayer < 3):
-        setStartingPlayer(startPlayer)
-        game_area_window.mainloop()
+        print("K: ", k)
+        print("AI: ", Ai)
+        print("Starting Player: ", startPlayer)
         window.destroy()
     else:
         print("Enter valid values for K and Starting Player")
