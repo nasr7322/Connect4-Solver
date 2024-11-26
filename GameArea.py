@@ -1,8 +1,5 @@
-
 from pathlib import Path
-
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"E:\21011054\Fall 2024\AI\Lab 2\build\assets\frame0")
 
@@ -12,9 +9,10 @@ def relative_to_assets(path: str) -> Path:
 
 window = Tk()
 window.title("Game Area")
-Player = 1 ## innitial player - change if u want ai to start first
-s1=0
-s2=0
+
+Player=-1
+s1= -1
+s2 = -1
 window.geometry("800x500")
 window.configure(bg = "#FFFFFF")
 
