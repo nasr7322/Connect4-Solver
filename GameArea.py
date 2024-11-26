@@ -10,33 +10,36 @@ def relative_to_assets(path: str) -> Path:
 window = Tk()
 window.title("Game Area")
 
-Player=-1
+Player = 1  ## we need to set it to the initial player before we start the main loop
 s1= -1
 s2 = -1
 window.geometry("800x500")
 window.configure(bg = "#FFFFFF")
 
-def updateGui(Col,Row,p,s1,s2): ##add player as input
-    canvas.create_image(
-        270+43*Col,
-        400-43*Row,
-        image=yellowPiece if Player == 1 else redPiece,
-    )
+def updateGui(p,s1,s2): ##updates player's turn and scores
     canvas.itemconfig(turn_indicator, text="Player " + str(p) + " ‘s turn")
     canvas.itemconfig(flag, fill="#FF9D00" if p == 1 else "#D01466")
     canvas.itemconfig(score1, text="Score: "+str(s1))
     canvas.itemconfig(score2, text="Score: "+str(s2))
     
+def drawPiece(col,row,p):
+    canvas.create_image(
+        270+43*col,
+        400-43*row,
+        image=yellowPiece if p == 1 else redPiece,
+    )
+    
 def insertPiece(col):
     ## update backend and get player turn and scores
     global Player,s1,s2
-    ## calculate row to insert
+    ## calculate row to insert (todo)
     row = 2
     ##call the updateGui with parameters
-    Player = 2 if Player == 1 else 1
     s1+=1
     s2+=1
-    updateGui(col,row,Player,s1,s2)
+    drawPiece(col,row,Player)
+    Player = 2 if Player == 1 else 1
+    updateGui(Player,s1,s2)
 
 canvas = Canvas(
     window,
@@ -93,7 +96,7 @@ canvas.create_text(
     53.0,
     25.0,
     anchor="nw",
-    text="Player 1",
+    text="Player 1 (AI)",
     fill="#000000",
     font=("Inter Bold", 32 * -1)
 )
@@ -101,7 +104,7 @@ canvas.create_text(
     747.0,
     25.0,
     anchor="ne",
-    text="Player 2 (AI)",
+    text="Player 2",
     fill="#000000",
     font=("Inter Bold", 32 * -1)
 )
@@ -129,7 +132,7 @@ score1=canvas.create_text(
     53.0,
     71.0,
     anchor="nw",
-    text="Score: 00",
+    text="Score:",
     fill="#000000",
     font=("Inter Light", 13 * -1)
 )
@@ -138,7 +141,7 @@ score2=canvas.create_text(
     688.0,
     71.0,
     anchor="nw",
-    text="Score: 00",
+    text="Score:",
     fill="#000000",
     font=("Inter Light", 13 * -1)
 )
