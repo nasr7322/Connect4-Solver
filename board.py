@@ -1,3 +1,4 @@
+import copy
 class Board:
   def __init__(self, width=7, height=6):
     self.width = width
@@ -50,7 +51,25 @@ class Board:
           elif current_player == 2:
             self.player_2_score += score
         
-          print(row, col, dr, dc, self.player_1_score, self.player_2_score)
+          #print(row, col, dr, dc, self.player_1_score, self.player_2_score)
+
+  def get_valid_cols(self):
+    valid_cols = []
+    for col in range(0,self.width):
+      if self.board[0][col] == 0:
+        valid_cols.append(col)
+
+    return valid_cols
+  
+  def is_terminal_node(self):
+    for col in range(0,self.width):
+      if self.board[0][col] == 0:
+        return False      
+    return True
+  
+  def copy(self):
+    return copy.copy(self)
+         
 
   
 if __name__ == "__main__":
@@ -67,3 +86,4 @@ if __name__ == "__main__":
   for row in board_view:
     print(row)
   print(board.get_scores())
+
