@@ -21,12 +21,14 @@ def calculate_positions(node,depth, p, x, y, y_step, positions, count, max_width
         return
     
     child_y = y + y_step
-    x_step = max_width // (pow(p, depth + 1) + 1)
+    y_step = y_step*0.8
+    x_step = max_width / (pow(p, depth + 1) + 1)
     child_x = x_step*count[depth+1]
     index = 0
     for child in node.children:
         calculate_positions(child , depth+1 , 7, child_x,child_y,y_step, positions, count, max_width)
         child_x += x_step
+        index+=1
         count[depth+1]+=1
     
 # Function to draw the tree on the Tkinter Canvas
@@ -42,7 +44,7 @@ def draw_tree(canvas, node, positions):
 
     # Draw the node
     x, y = positions[node]
-    size = 10
+    size = 12.5
     fill_color = "red" if node.score < 0 else "green" if node.score > 0 else "gray"
 
     if node.layer % 2 == 0:  # AI layer (circle)
@@ -109,24 +111,23 @@ def StartGui(k,root=None):
     # Calculate positions
     positions = {}
 
-    max_width = 1000
-    ##if the minimum width between nodes is less than 30, set it to 30
-    if(max_width//(pow(branching_factor,max_depth)+1) < 30):
-        max_width = 30*(pow(branching_factor,max_depth)+1)
+
+    ##set max width of the tree to make the minimum spacing 30
+    max_width = 30*(pow(branching_factor,max_depth)+1)
         
     positions = {}
     y_step = 150
     
     count = [1]*(max_depth+1) ##count of nodes at each depth
     
-    calculate_positions(root, 0, branching_factor, max_width/2, 100, y_step, positions, count, max_width)
+    calculate_positions(root, 0, branching_factor, max_width/2, 50, y_step, positions, count, max_width)
 
     # determine canvas size
     all_x = [pos[0] for pos in positions.values()]
     all_y = [pos[1] for pos in positions.values()]
 
     canvas_width = max(800, max(all_x)+50)
-    canvas_height = max(600, max(all_y)+100)
+    canvas_height = max(600, max(all_y)+50)
     canvas.config(width=800,height=600,scrollregion=(0, 0, canvas_width, canvas_height))
 
     # Draw the tree
@@ -135,4 +136,4 @@ def StartGui(k,root=None):
     # Start the Tkinter event loop
     window.mainloop()
     
-StartGui(4)
+StartGui(2)
