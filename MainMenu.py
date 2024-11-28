@@ -5,6 +5,7 @@ ASSETS_PATH = "assets/MainMenu"
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+## initial dummy values
 k = -1
 Ai = -1
 startPlayer = -1
@@ -135,10 +136,11 @@ def StartGui():
     )
 
     ## text area for the user to enter a variable K
-    entry_bg_1 = canvas.create_image(
+    entry_image = PhotoImage(file=relative_to_assets("entry.png"))
+    entry_bg_k = canvas.create_image(
         426.5,
         323.0,
-        image=PhotoImage(file=relative_to_assets("entry_1.png"))
+        image=entry_image
     )
     entry_k = Entry(
         bd=0,
@@ -152,7 +154,7 @@ def StartGui():
         width=67.0,
         height=18.0
     )
-    text_k = canvas.create_text(
+    label_k = canvas.create_text(
         335.0,
         315.0,
         anchor="nw",
@@ -162,10 +164,10 @@ def StartGui():
     )
 
     ## text area for the user to the starting player
-    entry_bg_2 = canvas.create_image(
+    entry_bg_starter = canvas.create_image(
         426.5,
         353.0,
-        image=PhotoImage(file=relative_to_assets("entry_2.png"))
+        image=entry_image
     )
     entry_starter = Entry(
         bd=0,
@@ -179,7 +181,7 @@ def StartGui():
         width=67.0,
         height=18.0
     )
-    text_starter = canvas.create_text(
+    label_starter = canvas.create_text(
         335.0,
         345.0,
         anchor="nw",
