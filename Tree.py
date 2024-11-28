@@ -1,10 +1,10 @@
+import random
 import tkinter as tk
 from math import pow
 
 # Define the MinimaxNode class
 class MinimaxNode:
-    def __init__(self, state, score, layer):
-        self.state = state  # The Connect 4 board state or relevant data
+    def __init__(self,score, layer):
         self.score = score  # Minimax score
         self.children = []  # List of child nodes
         self.layer = layer  # Layer of the tree (0 = root, 1 = AI, 2 = human, etc.)
@@ -13,17 +13,22 @@ class MinimaxNode:
         self.children.append(child_node)
 
 # Function to calculate node positions
-def calculate_positions(node, x, y, x_step, y_step, positions, parent_position=None):
+def calculate_positions(node,depth, p, x, y, y_step, positions):
+    # Store the position of the current node
     positions[node] = (x, y)
-    num_children = len(node.children)
-    if num_children > 1:
-        x_step = 50
-
-    start_x = x - (num_children - 1) * x_step / 2
-    for i, child in enumerate(node.children):
-        child_x = start_x + i * x_step
-        child_y = y + y_step
-        calculate_positions(child, child_x, child_y, x_step / 2, y_step, positions, (x, y))
+    
+    if node.children == []:
+        return
+    
+    child_y = y + y_step
+    x_step = max_width // (pow(p, depth + 1) + 1)
+    child_x = x_step*count[depth+1]
+    index = 0
+    for child in node.children:
+        calculate_positions(child , depth+1 , 7, child_x,child_y,y_step, positions)
+        child_x += x_step
+        count[depth+1]+=1
+    
 
 # Function to draw the tree on the Tkinter Canvas
 def draw_tree(canvas, node, positions):
@@ -55,60 +60,29 @@ def draw_tree(canvas, node, positions):
     # Draw the score inside the node
     canvas.create_text(x, y, text=str(node.score), fill="white", font=("Arial", 10))
 
-# Build the tree
-root = MinimaxNode(state="Root", score=0, layer=0)
-human0 = MinimaxNode(state="Col0", score=2, layer=1)
-human1 = MinimaxNode(state="Col1", score=0, layer=1)
-human2 = MinimaxNode(state="Col2", score=-1, layer=1)
-human3 = MinimaxNode(state="Col3", score=0, layer=1)
-human4 = MinimaxNode(state="Col4", score=-3, layer=1)
-human5 = MinimaxNode(state="Col5", score=4, layer=1)
-human6 = MinimaxNode(state="Col6", score=1, layer=1)
+def create_tree(depth, branch_factor):
+    def create_node(layer):
+        score = random.randint(-5, 5)  # Random score between -5 and 5
+        return MinimaxNode(score, layer)
 
-root.add_child(human0)
-root.add_child(human1)
-root.add_child(human2)
-root.add_child(human3)
-root.add_child(human4)
-root.add_child(human5)
-root.add_child(human6)
+    def add_children(node, current_depth):
+        if current_depth < depth:
+            for _ in range(branch_factor):
+                child = create_node(current_depth + 1)
+                node.add_child(child)
+                add_children(child, current_depth + 1)
 
-ai0 = MinimaxNode(state="AI0", score=3, layer=2)
-ai1 = MinimaxNode(state="AI1", score=-2, layer=2)
-ai2 = MinimaxNode(state="AI2", score=1, layer=2)
-ai3 = MinimaxNode(state="AI3", score=0, layer=2)
-ai4 = MinimaxNode(state="AI4", score=-1, layer=2)
-ai5 = MinimaxNode(state="AI5", score=2, layer=2)
-ai6 = MinimaxNode(state="AI6", score=4, layer=2)
-ai7 = MinimaxNode(state="AI7", score=3, layer=2)
-ai8 = MinimaxNode(state="AI8", score=-2, layer=2)
-ai9 = MinimaxNode(state="AI9", score=1, layer=2)
-ai10 = MinimaxNode(state="AI10", score=0, layer=2)
-ai11 = MinimaxNode(state="AI11", score=-1, layer=2)
-ai12 = MinimaxNode(state="AI12", score=2, layer=2)
-ai13 = MinimaxNode(state="AI13", score=4, layer=2)
+    root = create_node(0)
+    add_children(root, 0)
+    return root
 
-
-human0.add_child(ai0)
-human0.add_child(ai1)
-human0.add_child(ai2)
-human1.add_child(ai3)
-human2.add_child(ai4)
-human2.add_child(ai5)
-human3.add_child(ai6)
-human3.add_child(ai7)
-human3.add_child(ai8)
-human5.add_child(ai9)
-human6.add_child(ai10)
-human6.add_child(ai11)
-human6.add_child(ai12)
-human6.add_child(ai13)
+# Example usage:
+root = create_tree(3, 7)
 
 # Calculate positions
 positions = {}
-canvas_width = 800
+canvas_width = 1000
 canvas_height = 600
-calculate_positions(root, canvas_width // 2, 50, 300, 100, positions)
 
 # Create Tkinter window
 window = tk.Tk()
@@ -133,20 +107,23 @@ canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 h_scrollbar.config(command=canvas.xview)
 v_scrollbar.config(command=canvas.yview)
 
-# Calculate positions and determine canvas bounds
+# Calculate positions
+max_depth = 3 ##k
+count = [1]*(max_depth+1)
+max_width = canvas_width
+if(max_width//(pow(7,max_depth)+1) < 30):
+    max_width = 30*(pow(7,max_depth)+1)
 positions = {}
-x_step_initial = 300  # Adjust for initial horizontal spacing
-y_step = 100  # Vertical spacing
-calculate_positions(root, 400, 50, x_step_initial, y_step, positions)
+y_step = 150
 
+calculate_positions(root, 0, 7, max_width/2, 100, y_step, positions)
 # Dynamically determine canvas size
 all_x = [pos[0] for pos in positions.values()]
 all_y = [pos[1] for pos in positions.values()]
 
 canvas_width = max(800, max(all_x) + 100)
 canvas_height = max(600, max(all_y) + 100)
-
-canvas.config(scrollregion=(0, 0, canvas_width, canvas_height))
+canvas.config(height=600,width=800,scrollregion=(0, 0, canvas_width, canvas_height))
 
 # Draw the tree
 draw_tree(canvas, root, positions)
