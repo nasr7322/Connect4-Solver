@@ -66,9 +66,9 @@ class Board:
               is_four = False
               break
 
-          if current_player == 1 and is_four:
+          if current_player == Turn.AI and is_four:
             self.player_1_actual_score += 1
-          elif current_player == 2 and is_four:
+          elif current_player == Turn.HUMAN and is_four:
             self.player_2_actual_score += 1
 
   def update_heuristic(self):
@@ -92,18 +92,17 @@ class Board:
               score *= 2
             else:
               break
-          if current_player == 1:
+          if current_player == Turn.AI:
             self.player_1_heuristic_score += score
-          elif current_player == 2:
+          elif current_player == Turn.HUMAN:
             self.player_2_heuristic_score += score
         
-          print(row, col, dr, dc, self.player_1_heuristic_score, self.player_2_heuristic_score)
 
   
 if __name__ == "__main__":
   board = Board()
   board.add_piece(0)
-  board.add_piece(0)
+  board.add_piece(1)
   board.add_piece(0)
   board.add_piece(1)
   board.add_piece(0)

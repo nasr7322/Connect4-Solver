@@ -136,5 +136,6 @@ class MainMenu:
         self.window.resizable(False, False)
         self.window.mainloop()
 
-menu = MainMenu()
-menu.visualize()
+if __name__ == "__main__":
+  menu = MainMenu()
+  menu.visualize()
