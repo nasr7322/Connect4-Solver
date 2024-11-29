@@ -1,5 +1,5 @@
 ## Main file for the program
-from gui.MainMenu import MainMenu
+from gui.main_menu import MainMenu
 def main():
     # Start the main menu and return the values of K, Ai, and startPlayer
     # start the game loop with given values

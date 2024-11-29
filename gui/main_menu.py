@@ -1,7 +1,7 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage, Entry
 
-from .GameArea import GameArea
+from .game_area import GameArea
 
 ASSETS_PATH = Path("assets/MainMenu")
 
