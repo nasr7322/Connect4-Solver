@@ -5,10 +5,10 @@ class Board:
     self.height = height
     self.board = [[Turn.NONE for _ in range(width)] for _ in range(height)]
     self.turn = turn
-    self.player_1_color = "red"
-    self.player_1_score = 0
-    self.player_2_color = "yellow"
-    self.player_2_score = 0
+    self.player_1_actual_score = 0
+    self.player_1_heuristic_score = 0
+    self.player_2_actual_score = 0
+    self.player_2_heuristic_score = 0
 
   def get_board(self):
     return self.board
@@ -17,10 +17,13 @@ class Board:
     return self.board[row][col]
 
   def get_scores(self):
-    return self.player_1_score, self.player_2_score
+    return self.player_1_actual_score, self.player_2_actual_score
+  
+  def get_heuristic_scores(self):
+    return self.player_1_heuristic_score, self.player_2_heuristic_score
   
   def get_player_turn(self):
-    return self.turn
+    return self.turn == Turn.AI 
   
   def add_piece(self, col):
     for row in range(self.height):
@@ -30,11 +33,35 @@ class Board:
         self.update_scores()
         return True
     return False
-
   def update_scores(self):
+    self.update_heuristic()
+    self.update_actual_scores()
+  
+  def update_actual_scores(self):
+    self.player_1_actual_score = 0
+    self.player_2_actual_score = 0
+    directions = [(0, 1), (1, 0), (1, 1), (1, -1)]
+    for row in range(self.height):
+      for col in range(self.width):
+        for dr, dc in directions:
+          current_player = self.board[row][col]
+          is_four = True
+          for piece in range(4):
+            current_x = col + dc * piece
+            current_y = row + dr * piece
+            if not (0 <= current_x < self.width and 0 <= current_y < self.height and self.board[current_y][current_x] == current_player):
+              is_four = False
+              break
+
+          if current_player == 1 and is_four:
+            self.player_1_actual_score += 1
+          elif current_player == 2 and is_four:
+            self.player_2_actual_score += 1
+
+  def update_heuristic(self):
     directions = [(0, 1), (1, 0), (1, 1), (1, -1)] # horizontal, vertical, diagonal, anti-diagonal
-    self.player_1_score = 0
-    self.player_2_score = 0
+    self.player_1_heuristic_score = 0
+    self.player_2_heuristic_score = 0
     for row in range(self.height):
       for col in range(self.width):
         for dr, dc in directions:
@@ -53,11 +80,11 @@ class Board:
             else:
               break
           if current_player == 1:
-            self.player_1_score += score
+            self.player_1_heuristic_score += score
           elif current_player == 2:
-            self.player_2_score += score
+            self.player_2_heuristic_score += score
         
-          print(row, col, dr, dc, self.player_1_score, self.player_2_score)
+          print(row, col, dr, dc, self.player_1_heuristic_score, self.player_2_heuristic_score)
 
   
 if __name__ == "__main__":

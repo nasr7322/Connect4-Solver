@@ -18,7 +18,7 @@ class GameArea:
         self.turn_flag = None
         self.score1 = None
         self.score2 = None
-        self.board = Board(turn=Turn.from_int(initial_player), mode=Mode.from_str(mode), k_levels=k_levels)
+        self.board = Board(turn=Turn.from_int(initial_player), mode=Mode.from_int(mode), k_levels=k_levels)
 
     def update_gui(self):
         self.canvas.itemconfig(self.turn_indicator, text="Player " + str(self.board.get_player_turn()) + " ‘s turn")
@@ -28,7 +28,7 @@ class GameArea:
         self.canvas.itemconfig(self.score2, text="Score: " + str(player_2_score))
 
     def draw_piece(self, col, row, player=None):
-        if not player:
+        if player == Turn.NONE:
             return
         self.canvas.create_image(
             270 + 43 * col,

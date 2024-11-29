@@ -20,12 +20,12 @@ class Mode(Enum):
     EXPECTED_MINIMAX = "expected_minimax"
 
     @classmethod
-    def from_str(cls, mode: str):
-        if mode == "minimax":
+    def from_int(cls, mode: int):
+        if mode == 0:
             return cls.MINIMAX
-        elif mode == "pruning_minimax":
+        elif mode == 1:
             return cls.PRUNING_MINIMAX
-        elif mode == "expected_minimax":
+        elif mode == 2:
             return cls.EXPECTED_MINIMAX
         else:
             raise ValueError("Invalid mode")
