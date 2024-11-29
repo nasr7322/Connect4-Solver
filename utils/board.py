@@ -5,6 +5,8 @@ class Board:
     self.height = height
     self.board = [[Turn.NONE for _ in range(width)] for _ in range(height)]
     self.turn = turn
+    self.mode = mode
+    self.k_levels = k_levels
     self.player_1_actual_score = 0
     self.player_1_heuristic_score = 0
     self.player_2_actual_score = 0
@@ -23,7 +25,16 @@ class Board:
     return self.player_1_heuristic_score, self.player_2_heuristic_score
   
   def get_player_turn(self):
-    return self.turn == Turn.AI 
+    return self.turn == Turn.AI
+
+  def ai_move(self):
+    if self.mode == Mode.MINIMAX:
+      pass
+    elif self.mode == Mode.PRUNING_MINIMAX:
+      pass
+    elif self.mode == Mode.EXPECTED_MINIMAX:
+      pass
+    pass
   
   def add_piece(self, col):
     for row in range(self.height):
@@ -31,8 +42,10 @@ class Board:
         self.board[row][col] = self.turn
         self.turn = Turn.HUMAN if self.turn == Turn.AI else Turn.AI
         self.update_scores()
+        self.ai_move()
         return True
     return False
+  
   def update_scores(self):
     self.update_heuristic()
     self.update_actual_scores()
