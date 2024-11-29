@@ -56,13 +56,12 @@ def StartGui():
         highlightthickness = 0,
         relief = "ridge"
     )
-    
     canvas.place(x = 0, y = 0)
 
-    bg_image = PhotoImage(file=relative_to_assets("image_1.png"))
+    bg_image = PhotoImage(file=relative_to_assets("BG.png"))
     bg_element = canvas.create_image(
         100.0,
-        611.0,
+        600.0,
         image=bg_image
     )
 
@@ -72,76 +71,46 @@ def StartGui():
         if y > -100:
             canvas.move(bg_element, 0, -1)
             window.after(60, animate_image)
+        else:
+            canvas.coords(bg_element, 100, 600)
+            window.after(60, animate_image)
 
     animate_image()
 
-    Menu_image = PhotoImage(file=relative_to_assets("image_2.png"))
+    Menu_image = PhotoImage(file=relative_to_assets("Menu.png"))
     Menu = canvas.create_image(
         400.0,
         250.0,
         image=Menu_image
     )
     Title = canvas.create_text(
-        319.0,
-        137.0,
-        anchor="nw",
+        400.0,
+        150.0,
+        anchor="center",
         text="Connect 4",
         fill="#000000",
         font=("Inter Bold", 32 * -1)
     )
 
-    Option_0_image = PhotoImage(file=relative_to_assets("button_0.png"))
-    button_Option_0 = Button(
-        image=Option_0_image,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: selectOption(window, entry_k ,entry_starter,0),
-        relief="flat"
-    )
-    button_Option_0.place(
-        x=335.0,
-        y=193.0,
-        width=130.0,
-        height=30.0
-    )
-
-    Option_1_image = PhotoImage(file=relative_to_assets("button_1.png"))
-    button_Option_1 = Button(
-        image=Option_1_image,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: selectOption(window, entry_k ,entry_starter,1),
-        relief="flat"
-    )
-    button_Option_1.place(
-        x=335.0,
-        y=233.0,
-        width=130.0,
-        height=30.0
-    )
-
-    Option_2_image = PhotoImage(file=relative_to_assets("button_2.png"))
-    button_Option_2 = Button(
-        image=Option_2_image,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: selectOption(window, entry_k ,entry_starter,2),
-        relief="flat"
-    )
-    button_Option_2.place(
-        x=335.0,
-        y=273.0,
-        width=130.0,
-        height=30.0
-    )
+    ## buttons for the user to select the AI type
+    for i in range(3):
+        option_image = PhotoImage(file=relative_to_assets(f"button_{i}.png"))
+        button_option = Button(
+            image=option_image,
+            borderwidth=0,
+            highlightthickness=0,
+            command=lambda: selectOption(window, entry_k, entry_starter, i),
+            relief="flat"
+        )
+        button_option.image = option_image  # Keep a reference to the image to prevent garbage collection
+        button_option.place(
+            x = 335.0,
+            y = 190.0 + (i * 40.0),
+            width = 130.0,
+            height = 30.0
+        )
 
     ## text area for the user to enter a variable K
-    entry_image = PhotoImage(file=relative_to_assets("entry.png"))
-    entry_bg_k = canvas.create_image(
-        426.5,
-        323.0,
-        image=entry_image
-    )
     entry_k = Entry(
         bd=0,
         bg="#D9D9D9",
@@ -149,8 +118,8 @@ def StartGui():
         highlightthickness=0
     )
     entry_k.place(
-        x=393.0,
-        y=313.0,
+        x=395.0,
+        y=315.0,
         width=67.0,
         height=18.0
     )
@@ -164,11 +133,6 @@ def StartGui():
     )
 
     ## text area for the user to the starting player
-    entry_bg_starter = canvas.create_image(
-        426.5,
-        353.0,
-        image=entry_image
-    )
     entry_starter = Entry(
         bd=0,
         bg="#D9D9D9",
@@ -176,8 +140,8 @@ def StartGui():
         highlightthickness=0
     )
     entry_starter.place(
-        x=393.0,
-        y=343.0,
+        x=395.0,
+        y=345.0,
         width=67.0,
         height=18.0
     )
