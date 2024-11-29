@@ -1,200 +1,135 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage, Entry
 
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"E:\21011054\Fall 2024\AI\Lab 2\build\assets\frame1")
+ASSETS_PATH = Path("assets/MainMenu")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+class MainMenu:
+    def __init__(self):
+        self.window = None
+        self.canvas = None
+        self.entry_k = None
+        self.entry_starter = None
+        self.k = None
+        self.Ai = None
+        self.startPlayer = None
 
-window = Tk()
-window.title("Main Menu")
-window.geometry("800x500")
-window.configure(bg = "#FFFFFF")
+    def selectOption(self, option):
+        ## validation
+        if self.entry_k.get() == "" or not self.entry_k.get().isnumeric():
+            print("Enter a value for K")
+            return
+        if self.entry_starter.get() == "" or not self.entry_starter.get().isnumeric():
+            print("Enter a value for Starting Player")
+            return
 
-k = -1
-Ai = -1
-startPlayer = -1
+        self.k = int(self.entry_k.get())  # k is the depth of the minimax tree
+        self.Ai = option  # 0 normal minimax, 1 alpha-beta, 2 expected minimax
+        self.startPlayer = int(self.entry_starter.get())  # 1 for player 1 (AI), 2 for player 2 (Human)
 
-def selectOption(option):
-    global k, Ai, startPlayer
-    if (entry_k.get() == "" or entry_k.get().isnumeric() == False):
-        print("Enter a value for K")
-        return
-    if (starter.get() == "" or starter.get().isnumeric() == False):
-        print("Enter a value for Starting Player")
-        return
-    
-    k = int(entry_k.get())
-    ## k is the depth of the minimax tree
-    
-    Ai = option
-    ## option =0 for normal minimax
-    ## option =1 for alph beta
-    ## option =2 for Expected Minimax
+        ## value check
+        if self.k > 0 and 1 <= self.startPlayer <= 2:
+            print("K: ", self.k)
+            print("AI: ", self.Ai)
+            print("Starting Player: ", self.startPlayer)
+            self.window.destroy()
+        else:
+            print("Enter valid values for K and Starting Player")
 
-    startPlayer = int(starter.get())
-    ## startPlayer = 1 for player 1 (AI)
-    ## startPlayer = 2 for player 2 (Human)
-    
-    if (k > 0 and startPlayer > 0 and startPlayer < 3):
-        print("K: ", k)
-        print("AI: ", Ai)
-        print("Starting Player: ", startPlayer)
-        window.destroy()
-    else:
-        print("Enter valid values for K and Starting Player")
+    def animate_image(self, canvas, bg_element):
+        x, y = canvas.coords(bg_element)
+        if y > -100:
+            canvas.move(bg_element, 0, -1)
+            self.window.after(60, lambda: self.animate_image(canvas, bg_element))
+        else:
+            canvas.coords(bg_element, 100, 600)
+            self.window.after(60, lambda: self.animate_image(canvas, bg_element))
+            
+    def create_entry_with_label(self, x, y, label_text):
+        entry = Entry(
+            bd=0,
+            bg="#D9D9D9",
+            fg="#000716",
+            highlightthickness=0
+        )
+        entry.place(
+            x=x + 60,
+            y=y,
+            width=67.0,
+            height=18.0
+        )
+        self.canvas.create_text(
+            x,
+            y,
+            anchor="nw",
+            text=label_text,
+            fill="#757575",
+            font=("Inter", 12 * -1)
+        )
+        return entry
+
+    def visualize(self):
+        self.window = Tk()
+        self.window.title("Main Menu")
+        self.window.geometry("800x500")
+        self.window.configure(bg="#FFFFFF")
+
+        self.canvas = Canvas(
+            self.window,
+            bg="#F0F0F0",
+            height=500,
+            width=800,
+            bd=0,
+            highlightthickness=0,
+            relief="ridge"
+        )
+        self.canvas.place(x=0, y=0)
         
-canvas = Canvas(
-    window,
-    bg = "#F0F0F0",
-    height = 500,
-    width = 800,
-    bd = 0,
-    highlightthickness = 0,
-    relief = "ridge"
-)
+        ## Animating Backgound
+        bg_image = PhotoImage(file=relative_to_assets("BG.png"))
+        bg_element = self.canvas.create_image(100.0, 600.0, image=bg_image)
+        self.animate_image(self.canvas, bg_element)
 
-canvas.place(x = 0, y = 0)
-image_image_1 = PhotoImage(
-    file=relative_to_assets("image_1.png"))
-image_1 = canvas.create_image(
-    100.0,
-    611.0,
-    image=image_image_1
-)
-def animate_image():
-    x, y = canvas.coords(image_1)
-    if y > -100:
-        canvas.move(image_1, 0, -1)
-        window.after(60, animate_image)
+        ## menu board and title
+        Menu_image = PhotoImage(file=relative_to_assets("Menu.png"))
+        Menu = self.canvas.create_image(400.0, 250.0, image=Menu_image)
+        Title = self.canvas.create_text(
+            400.0,
+            150.0,
+            anchor="center",
+            text="Connect 4",
+            fill="#000000",
+            font=("Inter Bold", 32 * -1)
+        )
 
-animate_image()
+        ## buttons for the user to select the AI type
+        for i in range(3):
+            option_image = PhotoImage(file=relative_to_assets(f"button_{i}.png"))
+            button_option = Button(
+                image=option_image,
+                borderwidth=0,
+                highlightthickness=0,
+                command=lambda i=i: self.selectOption(i),
+                relief="flat"
+            )
+            button_option.image = option_image  # Keep a reference to the image to prevent garbage collection
+            button_option.place(
+                x=335.0,
+                y=190.0 + (i * 40.0),
+                width=130.0,
+                height=30.0
+            )
 
-image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
-image_2 = canvas.create_image(
-    400.0,
-    250.0,
-    image=image_image_2
-)
+        ## text area for the user to enter a variable K
+        self.entry_k = self.create_entry_with_label(335.0, 315.0, "Enter K:")
 
-canvas.create_text(
-    319.0,
-    137.0,
-    anchor="nw",
-    text="Connect 4",
-    fill="#000000",
-    font=("Inter Bold", 32 * -1)
-)
+        ## text area for the user to the starting player
+        self.entry_starter = self.create_entry_with_label(335.0, 345.0, "Starting:")
+        
+        self.window.resizable(False, False)
+        self.window.mainloop()
 
-button_image_0 = PhotoImage(
-    file=relative_to_assets("button_0.png"))
-button_0 = Button(
-    image=button_image_0,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: selectOption(0),
-    relief="flat"
-)
-button_0.place(
-    x=335.0,
-    y=193.0,
-    width=130.0,
-    height=30.0
-)
-
-
-button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
-button_1 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: selectOption(1),
-    relief="flat"
-)
-button_1.place(
-    x=335.0,
-    y=233.0,
-    width=130.0,
-    height=30.0
-)
-
-button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
-button_2 = Button(
-    image=button_image_2,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: selectOption(2),
-    relief="flat"
-)
-button_2.place(
-    x=335.0,
-    y=273.0,
-    width=130.0,
-    height=30.0
-)
-
-## text area for the user to enter a variable K
-entry_image_1 = PhotoImage(
-    file=relative_to_assets("entry_1.png"))
-entry_bg_1 = canvas.create_image(
-    426.5,
-    323.0,
-    image=entry_image_1
-)
-entry_k = Entry(
-    bd=0,
-    bg="#D9D9D9",
-    fg="#000716",
-    highlightthickness=0
-)
-entry_k.place(
-    x=393.0,
-    y=313.0,
-    width=67.0,
-    height=18.0
-)
-text_1 = canvas.create_text(
-    335.0,
-    315.0,
-    anchor="nw",
-    text="Enter K:",
-    fill="#757575",
-    font=("Inter", 12 * -1)
-)
-
-## text area for the user to the starting player
-entry_image_2 = PhotoImage(
-    file=relative_to_assets("entry_2.png"))
-entry_bg_2 = canvas.create_image(
-    426.5,
-    353.0,
-    image=entry_image_2
-)
-starter = Entry(
-    bd=0,
-    bg="#D9D9D9",
-    fg="#000716",
-    highlightthickness=0
-)
-starter.place(
-    x=393.0,
-    y=343.0,
-    width=67.0,
-    height=18.0
-)
-text_2 = canvas.create_text(
-    335.0,
-    345.0,
-    anchor="nw",
-    text="Starting:",
-    fill="#757575",
-    font=("Inter", 12 * -1)
-)
-
-window.resizable(False, False)
-window.mainloop()
+menu = MainMenu()
+menu.visualize()
