@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from tkinter import Tk, Canvas, Button, PhotoImage
 
 ASSETS_PATH = "assets/GameArea"
