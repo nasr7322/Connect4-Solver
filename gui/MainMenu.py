@@ -1,6 +1,8 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage, Entry
 
+from .GameArea import GameArea
+
 ASSETS_PATH = Path("assets/MainMenu")
 
 def relative_to_assets(path: str) -> Path:
@@ -35,6 +37,9 @@ class MainMenu:
             print("AI: ", self.Ai)
             print("Starting Player: ", self.startPlayer)
             self.window.destroy()
+            game_area = GameArea(initial_player=self.startPlayer, mode=self.Ai, k_levels=self.k)
+            game_area.visualize()
+
         else:
             print("Enter valid values for K and Starting Player")
 

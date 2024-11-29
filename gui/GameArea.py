@@ -1,6 +1,7 @@
 from pathlib import Path
-
 from tkinter import Tk, Canvas, Button, PhotoImage
+
+from utils.board import Board
 
 ASSETS_PATH = "assets/GameArea"
 
@@ -8,37 +9,43 @@ def relative_to_assets(path: str) -> Path:
     return Path(ASSETS_PATH) / Path(path)
 
 class GameArea:
-    def __init__(self, initial_player):
+    def __init__(self, initial_player, mode="minimax", k_levels=4):
         self.canvas = None
         self.yellow_piece = None
         self.red_piece = None
-        self.player = initial_player
         self.turn_indicator = None
         self.turn_flag = None
         self.score1 = None
         self.score2 = None
-        self.s1 = 0
-        self.s2 = 0
+        self.board = Board(turn=initial_player, mode=mode)
 
     def update_gui(self):
-        self.canvas.itemconfig(self.turn_indicator, text="Player " + str(self.player) + " ‘s turn")
-        self.canvas.itemconfig(self.turn_flag, fill="#FF9D00" if self.player == 1 else "#D01466")
-        self.canvas.itemconfig(self.score1, text="Score: " + str(self.s1))
-        self.canvas.itemconfig(self.score2, text="Score: " + str(self.s2))
+        self.canvas.itemconfig(self.turn_indicator, text="Player " + str(self.board.get_player_turn()) + " ‘s turn")
+        self.canvas.itemconfig(self.turn_flag, fill="#FF9D00" if self.board.get_player_turn() == 1 else "#D01466")
+        player_1_score, player_2_score = self.board.get_scores()
+        self.canvas.itemconfig(self.score1, text="Score: " + str(player_1_score))
+        self.canvas.itemconfig(self.score2, text="Score: " + str(player_2_score))
 
-    def draw_piece(self, col, row):
+    def draw_piece(self, col, row, player=None):
+        if not player:
+            return
         self.canvas.create_image(
             270 + 43 * col,
-            400 - 43 * row,
-            image=self.yellow_piece if self.player == 1 else self.red_piece,
+            185 + 43 * row,
+            image=self.yellow_piece if player == 1 else self.red_piece,
         )
+    
+    def draw_board(self):
+        for row in range(6):
+            for col in range(7):
+                self.draw_piece(col, row, self.board.get_cell(row, col))
 
     def insert_piece(self, col):
-        # calculate row to insert (todo)
-        row = 2
-        self.draw_piece(col, row)
-        # go to next turn
-        self.player = 2 if self.player == 1 else 1
+        is_added = self.board.add_piece(col)
+        if not is_added:
+            # TODO: display error message
+            return
+        self.draw_board()
         self.update_gui()
             
     def create_player_data(self, name, score, color, name_x, score_x, flag_x1, flag_x2, anchor="nw"):
@@ -108,7 +115,7 @@ class GameArea:
             355.0,
             43.0,
             anchor="nw",
-            text="Player " + str(self.player) + " ‘s turn",
+            text="Player " + str(self.board.get_player_turn()) + " ‘s turn",
             fill="#000000",
             font=("Inter", 13 * -1)
         )
@@ -117,7 +124,7 @@ class GameArea:
             65.0,
             446.0,
             71.0,
-            fill="#FF9D00" if self.player == 1 else "#D01466",
+            fill="#FF9D00" if self.board.get_player_turn() == 1 else "#D01466",
             outline=""
         )
 

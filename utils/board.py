@@ -1,9 +1,9 @@
 class Board:
-  def __init__(self, width=7, height=6):
+  def __init__(self, width=7, height=6, turn=1, mode="minimax"):
     self.width = width
     self.height = height
     self.board = [[0 for _ in range(width)] for _ in range(height)]
-    self.turn = 1
+    self.turn = turn
     self.player_1_color = "red"
     self.player_1_score = 0
     self.player_2_color = "yellow"
@@ -12,12 +12,18 @@ class Board:
   def get_board(self):
     return self.board
   
+  def get_cell(self, row, col):
+    return self.board[row][col]
+
   def get_scores(self):
     return self.player_1_score, self.player_2_score
   
+  def get_player_turn(self):
+    return self.turn
+  
   def add_piece(self, col):
     for row in range(self.height):
-      if row + 1 == self.height or self.board[row + 1][col] != 0:
+      if (row + 1 == self.height or self.board[row + 1][col] != 0) and self.board[row][col] == 0:
         self.board[row][col] = self.turn
         self.turn = 2 if self.turn == 1 else 1
         self.update_scores()
