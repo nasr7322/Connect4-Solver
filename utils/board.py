@@ -1,8 +1,9 @@
+from .enums import Turn, Mode
 class Board:
-  def __init__(self, width=7, height=6, turn=1, mode="minimax"):
+  def __init__(self, width=7, height=6, turn=Turn.AI, mode=Mode.MINIMAX, k_levels=4):
     self.width = width
     self.height = height
-    self.board = [[0 for _ in range(width)] for _ in range(height)]
+    self.board = [[Turn.NONE for _ in range(width)] for _ in range(height)]
     self.turn = turn
     self.player_1_color = "red"
     self.player_1_score = 0
@@ -23,9 +24,9 @@ class Board:
   
   def add_piece(self, col):
     for row in range(self.height):
-      if (row + 1 == self.height or self.board[row + 1][col] != 0) and self.board[row][col] == 0:
+      if (row + 1 == self.height or self.board[row + 1][col] != Turn.NONE) and self.board[row][col] == Turn.NONE:
         self.board[row][col] = self.turn
-        self.turn = 2 if self.turn == 1 else 1
+        self.turn = Turn.HUMAN if self.turn == Turn.AI else Turn.AI
         self.update_scores()
         return True
     return False

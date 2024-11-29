@@ -2,6 +2,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage
 
 from utils.board import Board
+from utils.enums import Turn, Mode
 
 ASSETS_PATH = "assets/GameArea"
 
@@ -17,11 +18,11 @@ class GameArea:
         self.turn_flag = None
         self.score1 = None
         self.score2 = None
-        self.board = Board(turn=initial_player, mode=mode)
+        self.board = Board(turn=Turn.from_int(initial_player), mode=Mode.from_str(mode), k_levels=k_levels)
 
     def update_gui(self):
         self.canvas.itemconfig(self.turn_indicator, text="Player " + str(self.board.get_player_turn()) + " ‘s turn")
-        self.canvas.itemconfig(self.turn_flag, fill="#FF9D00" if self.board.get_player_turn() == 1 else "#D01466")
+        self.canvas.itemconfig(self.turn_flag, fill="#FF9D00" if self.board.get_player_turn() == Turn.AI else "#D01466")
         player_1_score, player_2_score = self.board.get_scores()
         self.canvas.itemconfig(self.score1, text="Score: " + str(player_1_score))
         self.canvas.itemconfig(self.score2, text="Score: " + str(player_2_score))
@@ -32,7 +33,7 @@ class GameArea:
         self.canvas.create_image(
             270 + 43 * col,
             185 + 43 * row,
-            image=self.yellow_piece if player == 1 else self.red_piece,
+            image=self.yellow_piece if player == Turn.AI else self.red_piece,
         )
     
     def draw_board(self):
@@ -124,7 +125,7 @@ class GameArea:
             65.0,
             446.0,
             71.0,
-            fill="#FF9D00" if self.board.get_player_turn() == 1 else "#D01466",
+            fill="#FF9D00" if self.board.get_player_turn() == Turn.AI else "#D01466",
             outline=""
         )
 
