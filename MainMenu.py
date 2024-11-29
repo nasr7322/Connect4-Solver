@@ -46,6 +46,29 @@ class MainMenu:
         else:
             canvas.coords(bg_element, 100, 600)
             self.window.after(60, lambda: self.animate_image(canvas, bg_element))
+            
+    def create_entry_with_label(self, x, y, label_text):
+        entry = Entry(
+            bd=0,
+            bg="#D9D9D9",
+            fg="#000716",
+            highlightthickness=0
+        )
+        entry.place(
+            x=x + 60,
+            y=y,
+            width=67.0,
+            height=18.0
+        )
+        self.canvas.create_text(
+            x,
+            y,
+            anchor="nw",
+            text=label_text,
+            fill="#757575",
+            font=("Inter", 12 * -1)
+        )
+        return entry
 
     def visualize(self):
         self.window = Tk()
@@ -63,15 +86,15 @@ class MainMenu:
             relief="ridge"
         )
         self.canvas.place(x=0, y=0)
-
+        
+        ## Animating Backgound
         bg_image = PhotoImage(file=relative_to_assets("BG.png"))
         bg_element = self.canvas.create_image(100.0, 600.0, image=bg_image)
-
         self.animate_image(self.canvas, bg_element)
 
+        ## menu board and title
         Menu_image = PhotoImage(file=relative_to_assets("Menu.png"))
         Menu = self.canvas.create_image(400.0, 250.0, image=Menu_image)
-
         Title = self.canvas.create_text(
             400.0,
             150.0,
@@ -100,48 +123,11 @@ class MainMenu:
             )
 
         ## text area for the user to enter a variable K
-        self.entry_k = Entry(
-            bd=0,
-            bg="#D9D9D9",
-            fg="#000716",
-            highlightthickness=0
-        )
-        self.entry_k.place(
-            x=395.0,
-            y=315.0,
-            width=67.0,
-            height=18.0
-        )
-        self.label_k = self.canvas.create_text(
-            335.0,
-            315.0,
-            anchor="nw",
-            text="Enter K:",
-            fill="#757575",
-            font=("Inter", 12 * -1)
-        )
+        self.entry_k = self.create_entry_with_label(335.0, 315.0, "Enter K:")
 
         ## text area for the user to the starting player
-        self.entry_starter = Entry(
-            bd=0,
-            bg="#D9D9D9",
-            fg="#000716",
-            highlightthickness=0
-        )
-        self.entry_starter.place(
-            x=395.0,
-            y=345.0,
-            width=67.0,
-            height=18.0
-        )
-        label_starter = self.canvas.create_text(
-            335.0,
-            345.0,
-            anchor="nw",
-            text="Starting:",
-            fill="#757575",
-            font=("Inter", 12 * -1)
-        )
+        self.entry_starter = self.create_entry_with_label(335.0, 345.0, "Starting:")
+        
         self.window.resizable(False, False)
         self.window.mainloop()
 
