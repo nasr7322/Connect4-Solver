@@ -68,7 +68,7 @@ class Board:
     return True
   
   def copy(self):
-    return copy.copy(self)
+    return copy.deepcopy(self)
          
 
   

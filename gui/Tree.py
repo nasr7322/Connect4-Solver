@@ -8,6 +8,7 @@ class MinimaxNode:
         self.score = score  # Minimax score
         self.children = []  # List of child nodes
         self.layer = layer  # Layer of the node in the tree
+        self.best_move = None
 
     def add_child(self, child_node):
         self.children.append(child_node)
