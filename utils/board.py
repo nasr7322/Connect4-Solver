@@ -42,7 +42,6 @@ class Board:
         self.board[row][col] = self.turn
         self.turn = Turn.HUMAN if self.turn == Turn.AI else Turn.AI
         self.update_scores()
-        self.ai_move()
         return True
     return False
   

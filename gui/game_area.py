@@ -21,6 +21,7 @@ class GameArea:
         self.board = Board(turn=Turn.from_int(initial_player), mode=Mode.from_int(mode), k_levels=k_levels)
 
     def update_gui(self):
+        self.draw_board()
         self.canvas.itemconfig(self.turn_indicator, text="Player " + str(self.board.get_player_turn()) + " ‘s turn")
         self.canvas.itemconfig(self.turn_flag, fill="#FF9D00" if self.board.get_player_turn() == Turn.AI else "#D01466")
         player_1_score, player_2_score = self.board.get_scores()
@@ -46,7 +47,8 @@ class GameArea:
         if not is_added:
             # TODO: display error message
             return
-        self.draw_board()
+        self.update_gui()
+        self.board.ai_move()
         self.update_gui()
             
     def create_player_data(self, name, score, color, name_x, score_x, flag_x1, flag_x2, anchor="nw"):
