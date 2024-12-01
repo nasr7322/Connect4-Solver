@@ -14,6 +14,23 @@ class Turn(Enum):
         else:
             raise ValueError("Invalid turn")
 
+class NodeType(Enum):
+    MIN = 0
+    MAX = 1
+    CHANCE_MIN = 2
+    CHANCE_MAX = 3
+
+    @classmethod
+    def from_int(cls, type: int):
+        if type == 0:
+            return cls.MIN
+        elif type == 1:
+            return cls.MAX
+        elif type == 2:
+            return cls.CHANCE_MIN
+        elif type == 3:
+            return cls.CHANCE_MAX
+
 class Mode(Enum):
     MINIMAX = "minimax"
     PRUNING_MINIMAX = "pruning_minimax"

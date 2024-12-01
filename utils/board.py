@@ -1,3 +1,4 @@
+import copy
 from .enums import Turn, Mode
 class Board:
   def __init__(self, width=7, height=6, turn=Turn.AI, mode=Mode.MINIMAX, k_levels=4):
@@ -97,6 +98,23 @@ class Board:
             self.player_2_heuristic_score += score
         
 
+  def get_valid_cols(self):
+    valid_cols = []
+    for col in range(0,self.width):
+      if self.board[0][col] == 0:
+        valid_cols.append(col)
+
+    return valid_cols
+  
+  def is_terminal_node(self):
+    for col in range(0,self.width):
+      if self.board[0][col] == 0:
+        return False      
+    return True
+  
+  def copy(self):
+    return copy.deepcopy(self)
+         
   
 if __name__ == "__main__":
   board = Board()
