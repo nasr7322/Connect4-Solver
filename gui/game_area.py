@@ -6,6 +6,8 @@ from tkinter import Tk, Canvas, Button, PhotoImage
 from utils.board import Board
 from utils.enums import Turn, Mode
 from algorithms.expected_minimax import ExpectedMinimax
+from algorithms.minimax import Minimax
+from gui.tree import MinimaxTree
 
 ASSETS_PATH = "assets/GameArea"
 
@@ -15,62 +17,90 @@ def relative_to_assets(path: str) -> Path:
 class GameArea:
     def __init__(self, initial_player, mode=0, k_levels=4):
         self.canvas = None
+        self.window = None
         self.yellow_piece = None
         self.red_piece = None
         self.turn_indicator = None
         self.turn_flag = None
         self.score1 = None
         self.score2 = None
-        self.mode=Mode.from_int(mode)
-        self.k_levels = k_levels
-        self.board = Board(turn=Turn.from_int(initial_player), mode=self.mode)
+        self.mode = mode # 0 normal minimax, 1 alpha-beta, 2 expected minimax
+        self.k_levels = k_levels # k is the depth of the minimax tree
+        self.board = Board(7,6,initial_player, mode=self.mode) # 1 for player 1 (AI), 2 for player 2 (Human)
 
     def update_gui(self):
-        self.draw_board()
         self.canvas.itemconfig(self.turn_indicator, text="Player " + str(self.board.get_player_turn()) + " ‘s turn")
-        self.canvas.itemconfig(self.turn_flag, fill="#FF9D00" if self.board.get_player_turn() == Turn.AI else "#D01466")
+        self.canvas.itemconfig(self.turn_flag, fill="#FF9D00" if self.board.get_player_turn() == 1 else "#D01466")
         player_1_score, player_2_score = self.board.get_scores()
         self.canvas.itemconfig(self.score1, text="Score: " + str(player_1_score))
         self.canvas.itemconfig(self.score2, text="Score: " + str(player_2_score))
         print(self.board.get_heuristic_scores())
 
     def draw_piece(self, col, row, player=None):
-        if player == Turn.NONE:
-            return
         self.canvas.create_image(
             270 + 43 * col,
             185 + 43 * row,
-            image=self.yellow_piece if player == Turn.AI else self.red_piece,
+            image=self.yellow_piece if player == 1 else self.red_piece,
         )
-    
-    def draw_board(self):
-        for row in range(6):
-            for col in range(7):
-                self.draw_piece(col, row, self.board.get_cell(row, col))
 
     def insert_piece(self, col):
-        is_added = self.board.add_piece(col)
-        if not is_added:
-            # TODO: display error message
+        row = self.board.add_piece(col)
+        if row == -1:
+            print("Invalid move")
             return
+        self.draw_piece(col, row, 2)
         self.update_gui()
+        if self.board.is_terminal_node():
+            self.end_game()
+            return
         self.ai_move()
         self.update_gui()
+        if self.board.is_terminal_node():
+            self.end_game()
+        
+        
+    def end_game(self):
+        player1_score = self.board.player_1_actual_score
+        player2_score = self.board.player_2_actual_score
+        if player1_score > player2_score:
+            winner = "Player 1"
+        elif player2_score > player1_score:
+            winner = "Player 2"
+        else:
+            winner = "It's a tie"
+        
+        print(f"Game over. {winner} wins!")
+        print(f"Player 1 Score: {player1_score}")
+        print(f"Player 2 Score: {player2_score}")
+        self.window.destroy()
+
             
     def ai_move(self):
-      start_time = time.time()
-      if self.mode == Mode.MINIMAX:
-        pass
-      elif self.mode == Mode.PRUNING_MINIMAX:
-        pass
-      elif self.mode == Mode.EXPECTED_MINIMAX:
-        expected_minimax = ExpectedMinimax(self.board, self.k_levels)
-        best_col, util = expected_minimax.expected_minimax()
+        start_time = time.time()
+        best_col = None
+        row = None
+        minimax_tree = None
+        if self.mode == 0:
+            minimax = Minimax(self.board, self.k_levels, self.board.get_player_turn() == 1)
+            best_col, util, root = minimax.minimax_no_pruning()
+        elif self.mode == 1:
+            minimax = Minimax(self.board, self.k_levels, self.board.get_player_turn() == 1)
+            best_col, util, root = minimax.minimax_pruning()
+        elif self.mode == 2:
+            expected_minimax = ExpectedMinimax(self.board, self.k_levels)
+            best_col, util, root = expected_minimax.expected_minimax()
+
         print("AI Utility: ", util)
         print("AI Best Move: ", best_col)
-        self.board.add_piece(best_col)
-      
-      print("Time taken: ", time.time() - start_time)
+        if best_col is not None:
+            row = self.board.add_piece(best_col)
+            self.draw_piece(best_col, row, 1)
+            self.update_gui()
+            #   minimax_tree = MinimaxTree(self.k_levels,self.board.width,root)
+            #   minimax_tree.visualize()
+            if self.board.is_terminal_node():
+                self.end_game()
+        print("Time taken: ", time.time() - start_time)
 
     def create_player_data(self, name, score, color, name_x, score_x, flag_x1, flag_x2, anchor="nw"):
         self.canvas.create_text(
@@ -104,7 +134,7 @@ class GameArea:
         window.title("Game Area")
         window.geometry("800x500")
         window.configure(bg="#FFFFFF")
-
+        self.window = window
         self.canvas = Canvas(
             window,
             bg="#FFFFFF",
@@ -148,7 +178,7 @@ class GameArea:
             65.0,
             446.0,
             71.0,
-            fill="#FF9D00" if self.board.get_player_turn() == Turn.AI else "#D01466",
+            fill="#FF9D00" if self.board.get_player_turn() == 1 else "#D01466",
             outline=""
         )
 
@@ -200,7 +230,10 @@ class GameArea:
             buttons.append(button)
 
         window.resizable(False, False)
+        if(self.board.get_player_turn() == 1):
+            self.ai_move()
         window.mainloop()
+
 
 if __name__ == "__main__":
     game_area = GameArea(initial_player=2)

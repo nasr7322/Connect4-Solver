@@ -39,6 +39,9 @@ class MainMenu:
             self.window.destroy()
             game_area = GameArea(initial_player=self.startPlayer, mode=self.Ai, k_levels=self.k)
             game_area.visualize()
+            if(self.startPlayer == 1):
+                game_area.ai_move()
+
 
         else:
             print("Enter valid values for K and Starting Player")

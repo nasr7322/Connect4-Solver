@@ -4,10 +4,12 @@ import random
 from .enums import Turn, Mode
 
 class Board:
-  def __init__(self, width=7, height=6, turn=Turn.HUMAN, mode=Mode.MINIMAX):
+  def __init__(self, width=7, height=6, turn=1, mode=0):
     self.width = width
     self.height = height
-    self.board = [[Turn.NONE for _ in range(width)] for _ in range(height)]
+    self.remaining_moves = width * height
+    self.board = [[0 for _ in range(self.width)] for _ in range(self.height)]
+    # print(self.board)
     self.turn = turn
     self.player_1_actual_score = 0
     self.player_1_heuristic_score = 0
@@ -31,11 +33,11 @@ class Board:
     return self.turn
   
   def add_piece(self, col):
-    valid_cols = [c for c in self.get_valid_cols() if abs(c - col) <= 1]
+    valid_cols = self.get_valid_cols()
     if col not in valid_cols:
-      return False
+      return -1
     
-    if self.mode == Mode.EXPECTED_MINIMAX:
+    if self.mode == 2:
       thresh_target = 60 + (40 if len(valid_cols) == 1 else 0)
       thresh_left = (40 / (len(valid_cols)-1) + thresh_target) if (col-1) in valid_cols else thresh_target
       thresh_right = 40 / (len(valid_cols)-1) + thresh_left if (col+1) in valid_cols else thresh_left
@@ -47,12 +49,13 @@ class Board:
         col += 1
 
     for row in range(self.height):
-      if (row + 1 == self.height or self.board[row + 1][col] != Turn.NONE) and self.board[row][col] == Turn.NONE:
+      if (row + 1 == self.height or self.board[row + 1][col] != 0) and self.board[row][col] == 0:
         self.board[row][col] = self.turn
-        self.turn = Turn.HUMAN if self.turn == Turn.AI else Turn.AI
+        self.turn = 2 if self.turn == 1 else 1
         self.update_scores()
-        return True
-    return False
+        self.remaining_moves -= 1
+        return row
+    return -1
   
   def update_scores(self):
     self.update_heuristic()
@@ -74,9 +77,9 @@ class Board:
               is_four = False
               break
 
-          if current_player == Turn.AI and is_four:
+          if current_player == 1 and is_four:
             self.player_1_actual_score += 1
-          elif current_player == Turn.HUMAN and is_four:
+          elif current_player == 2 and is_four:
             self.player_2_actual_score += 1
 
   def update_heuristic(self):
@@ -95,41 +98,35 @@ class Board:
               score = 0
               break
             if self.board[current_y][current_x] != current_player:
-              score = 0 if self.board[current_y][current_x] != Turn.NONE else score
+              score = 0 if self.board[current_y][current_x] != 0 else score
               break
             score *= 4
           score /= 4
 
-          if current_player == Turn.AI:
+          if current_player == 1:
             self.player_1_heuristic_score += score
-          elif current_player == Turn.HUMAN:
+          elif current_player == 2:
             self.player_2_heuristic_score += score
-
-
-        
 
   def get_valid_cols(self):
     valid_cols = []
-    for col in range(0,self.width):
-      if self.board[0][col] == Turn.NONE:
+    for col in range(self.width):
+      if self.board[0][col] == 0:
         valid_cols.append(col)
-
     return valid_cols
   
   def is_terminal_node(self):
-    for col in range(0,self.width):
-      if self.board[0][col] == Turn.NONE:
-        return False      
-    return True
+    return self.remaining_moves == 0
   
   def copy(self):
     return copy.deepcopy(self)
 
   def remove_piece(self,col):
     for i in range(0,self.height):
-      if(self.board[i][col] != Turn.NONE):
-        self.board[i][col] = Turn.NONE
-        self.turn = Turn.HUMAN if self.turn == Turn.AI else Turn.AI
+      if(self.board[i][col] != 0):
+        self.board[i][col] = 0
+        self.remaining_moves += 1
+        self.turn = 2 if self.turn == 1 else 1
         break
     return
          
