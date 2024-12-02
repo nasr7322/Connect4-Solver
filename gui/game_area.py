@@ -95,12 +95,15 @@ class GameArea:
         if self.mode == 0:
             minimax = Minimax(self.board, self.k_levels, self.board.get_player_turn() == 1)
             best_col, util, root = minimax.minimax_no_pruning()
+            self.last_tree = MinimaxTree(self.k_levels,self.board.width,1,root)
         elif self.mode == 1:
             minimax = Minimax(self.board, self.k_levels, self.board.get_player_turn() == 1)
             best_col, util, root = minimax.minimax_pruning()
+            self.last_tree = MinimaxTree(self.k_levels,self.board.width,1,root)
         elif self.mode == 2:
             expected_minimax = ExpectedMinimax(self.board, self.k_levels)
             best_col, util, root = expected_minimax.expected_minimax()
+            self.last_tree = MinimaxTree(self.k_levels,self.board.width,2,root)
 
         print("AI Utility: ", util)
         print("AI Best Move: ", best_col)
@@ -108,7 +111,7 @@ class GameArea:
             col, row = self.board.add_piece(best_col)
             self.draw_piece(col, row, 1)
             self.update_gui()
-            self.last_tree = MinimaxTree(self.k_levels,self.board.width,root)
+
             if self.board.is_terminal_node():
                 self.end_game()
         print("Time taken: ", time.time() - start_time)
