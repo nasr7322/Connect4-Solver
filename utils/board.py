@@ -41,7 +41,6 @@ class Board:
       thresh_right = 40 / (len(valid_cols)-1) + thresh_left if (col+1) in valid_cols else thresh_left
 
       rand_sample = random.randint(0, 100)
-      print(rand_sample, thresh_target, thresh_left, thresh_right)
       if thresh_target < rand_sample < thresh_left:
         col -= 1
       elif thresh_left < rand_sample < thresh_right:
