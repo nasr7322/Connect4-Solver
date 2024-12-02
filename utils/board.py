@@ -94,8 +94,8 @@ class Board:
             if not (0 <= current_x < self.width and 0 <= current_y < self.height):
               score = 0
               break
-            if self.board[current_y][current_x] != current_player and self.board[current_y][current_x] != Turn.NONE:
-              score = 0
+            if self.board[current_y][current_x] != current_player:
+              score = 0 if self.board[current_y][current_x] != Turn.NONE else score
               break
             score *= 4
           score /= 4
