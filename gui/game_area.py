@@ -1,6 +1,11 @@
-from pathlib import Path
+import time
 
+from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage
+
+from utils.board import Board
+from utils.enums import Turn, Mode
+from algorithms.expected_minimax import ExpectedMinimax
 
 ASSETS_PATH = "assets/GameArea"
 
@@ -8,39 +13,65 @@ def relative_to_assets(path: str) -> Path:
     return Path(ASSETS_PATH) / Path(path)
 
 class GameArea:
-    def __init__(self, initial_player):
+    def __init__(self, initial_player, mode=0, k_levels=4):
         self.canvas = None
         self.yellow_piece = None
         self.red_piece = None
-        self.player = initial_player
         self.turn_indicator = None
         self.turn_flag = None
         self.score1 = None
         self.score2 = None
-        self.s1 = 0
-        self.s2 = 0
+        self.mode=Mode.from_int(mode)
+        self.k_levels = k_levels
+        self.board = Board(turn=Turn.from_int(initial_player), mode=self.mode)
 
     def update_gui(self):
-        self.canvas.itemconfig(self.turn_indicator, text="Player " + str(self.player) + " ‘s turn")
-        self.canvas.itemconfig(self.turn_flag, fill="#FF9D00" if self.player == 1 else "#D01466")
-        self.canvas.itemconfig(self.score1, text="Score: " + str(self.s1))
-        self.canvas.itemconfig(self.score2, text="Score: " + str(self.s2))
+        self.draw_board()
+        self.canvas.itemconfig(self.turn_indicator, text="Player " + str(self.board.get_player_turn()) + " ‘s turn")
+        self.canvas.itemconfig(self.turn_flag, fill="#FF9D00" if self.board.get_player_turn() == Turn.AI else "#D01466")
+        player_1_score, player_2_score = self.board.get_scores()
+        self.canvas.itemconfig(self.score1, text="Score: " + str(player_1_score))
+        self.canvas.itemconfig(self.score2, text="Score: " + str(player_2_score))
+        print(self.board.get_heuristic_scores())
 
-    def draw_piece(self, col, row):
+    def draw_piece(self, col, row, player=None):
+        if player == Turn.NONE:
+            return
         self.canvas.create_image(
             270 + 43 * col,
-            400 - 43 * row,
-            image=self.yellow_piece if self.player == 1 else self.red_piece,
+            185 + 43 * row,
+            image=self.yellow_piece if player == Turn.AI else self.red_piece,
         )
+    
+    def draw_board(self):
+        for row in range(6):
+            for col in range(7):
+                self.draw_piece(col, row, self.board.get_cell(row, col))
 
     def insert_piece(self, col):
-        # calculate row to insert (todo)
-        row = 2
-        self.draw_piece(col, row)
-        # go to next turn
-        self.player = 2 if self.player == 1 else 1
+        is_added = self.board.add_piece(col)
+        if not is_added:
+            # TODO: display error message
+            return
+        self.update_gui()
+        self.ai_move()
         self.update_gui()
             
+    def ai_move(self):
+      start_time = time.time()
+      if self.mode == Mode.MINIMAX:
+        pass
+      elif self.mode == Mode.PRUNING_MINIMAX:
+        pass
+      elif self.mode == Mode.EXPECTED_MINIMAX:
+        expected_minimax = ExpectedMinimax(self.board, self.k_levels)
+        best_col, util = expected_minimax.expected_minimax()
+        print("AI Utility: ", util)
+        print("AI Best Move: ", best_col)
+        self.board.add_piece(best_col)
+      
+      print("Time taken: ", time.time() - start_time)
+
     def create_player_data(self, name, score, color, name_x, score_x, flag_x1, flag_x2, anchor="nw"):
         self.canvas.create_text(
             name_x,
@@ -108,7 +139,7 @@ class GameArea:
             355.0,
             43.0,
             anchor="nw",
-            text="Player " + str(self.player) + " ‘s turn",
+            text="Player " + str(self.board.get_player_turn()) + " ‘s turn",
             fill="#000000",
             font=("Inter", 13 * -1)
         )
@@ -117,7 +148,7 @@ class GameArea:
             65.0,
             446.0,
             71.0,
-            fill="#FF9D00" if self.player == 1 else "#D01466",
+            fill="#FF9D00" if self.board.get_player_turn() == Turn.AI else "#D01466",
             outline=""
         )
 
