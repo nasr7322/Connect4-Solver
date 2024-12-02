@@ -81,30 +81,30 @@ class Board:
             self.player_2_actual_score += 1
 
   def update_heuristic(self):
-    directions = [(0, 1), (1, 0), (1, 1), (1, -1)] # horizontal, vertical, diagonal, anti-diagonal
     self.player_1_heuristic_score = 0
     self.player_2_heuristic_score = 0
+    directions = [(0, 1), (1, 0), (1, 1), (1, -1)] # right, down, diagonal right, diagonal left
     for row in range(self.height):
       for col in range(self.width):
         for dr, dc in directions:
-          current_x, current_y = col, row
-          # get the beginning of the direction
-          while 0 <= current_x < self.width and 0 <= current_y < self.height:
-            current_x -= dc
-            current_y -= dr
           current_player = self.board[row][col]
           score = 1
-          for _ in range(4):
-            current_x += dc
-            current_y += dr
-            if 0 <= current_x < self.width and 0 <= current_y < self.height and self.board[current_y][current_x] == current_player:
-              score *= 2
-            else:
+          for piece in range(4):
+            current_x = col + dc * piece
+            current_y = row + dr * piece
+            if not (0 <= current_x < self.width and 0 <= current_y < self.height and self.board[current_y][current_x] == current_player):
               break
+            score *= 2
+          score /= 2
+
           if current_player == Turn.AI:
             self.player_1_heuristic_score += score
           elif current_player == Turn.HUMAN:
             self.player_2_heuristic_score += score
+          print(current_player, score, f"{dr},{dc}")
+        print(row, col, self.player_1_heuristic_score, self.player_2_heuristic_score)
+
+
         
 
   def get_valid_cols(self):
