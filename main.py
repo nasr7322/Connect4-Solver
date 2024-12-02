@@ -1,4 +1,3 @@
-## Main file for the program
 from gui.main_menu import MainMenu
 
 def main():

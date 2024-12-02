@@ -1,8 +1,6 @@
 import copy
 import random
 
-from .enums import Turn, Mode
-
 class Board:
   def __init__(self, width=7, height=6, turn=1, mode=0):
     self.width = width

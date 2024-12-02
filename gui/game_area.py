@@ -4,7 +4,6 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage
 
 from utils.board import Board
-from utils.enums import Turn, Mode
 from algorithms.expected_minimax import ExpectedMinimax
 from algorithms.minimax import Minimax
 from gui.tree import MinimaxTree
@@ -58,7 +57,6 @@ class GameArea:
         self.update_gui()
         if self.board.is_terminal_node():
             self.end_game()
-        
         
     def end_game(self):
         player1_score = self.board.player_1_actual_score
@@ -240,12 +238,13 @@ class GameArea:
         show_tree_button = Button(
             window,
             text="Show Last Minimax Tree",
+            anchor="center",
             command=self.show_last_tree,
             relief="flat"
         )
         show_tree_button.place(
-            x=350,
-            y=450,
+            x=325,
+            y=460,
             width=150,
             height=30
         )

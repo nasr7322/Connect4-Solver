@@ -1,6 +1,6 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage, Entry
-
+import threading
 from .game_area import GameArea
 
 ASSETS_PATH = Path("assets/MainMenu")
@@ -42,7 +42,6 @@ class MainMenu:
             if(self.startPlayer == 1):
                 game_area.ai_move()
 
-
         else:
             print("Enter valid values for K and Starting Player")
 
@@ -54,6 +53,9 @@ class MainMenu:
         else:
             canvas.coords(bg_element, 100, 600)
             self.window.after(60, lambda: self.animate_image(canvas, bg_element))
+            
+    def animate_image_thread(self, canvas, bg_element):
+        threading.Thread(target=self.animate_image, args=(canvas, bg_element)).start()
             
     def create_entry_with_label(self, x, y, label_text):
         entry = Entry(
@@ -98,7 +100,7 @@ class MainMenu:
         ## Animating Backgound
         bg_image = PhotoImage(file=relative_to_assets("BG.png"))
         bg_element = self.canvas.create_image(100.0, 600.0, image=bg_image)
-        self.animate_image(self.canvas, bg_element)
+        self.animate_image_thread(self.canvas, bg_element)
 
         ## menu board and title
         Menu_image = PhotoImage(file=relative_to_assets("Menu.png"))
