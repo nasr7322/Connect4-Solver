@@ -1,3 +1,5 @@
+import time
+
 from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage
 
@@ -56,6 +58,7 @@ class GameArea:
         self.update_gui()
             
     def ai_move(self):
+      start_time = time.time()
       if self.mode == Mode.MINIMAX:
         pass
       elif self.mode == Mode.PRUNING_MINIMAX:
@@ -66,6 +69,8 @@ class GameArea:
         print("AI Utility: ", util)
         print("AI Best Move: ", best_col)
         self.board.add_piece(best_col)
+      
+      print("Time taken: ", time.time() - start_time)
 
     def create_player_data(self, name, score, color, name_x, score_x, flag_x1, flag_x2, anchor="nw"):
         self.canvas.create_text(
