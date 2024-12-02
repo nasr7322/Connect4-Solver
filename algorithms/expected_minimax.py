@@ -10,10 +10,10 @@ class ExpectedMinimax:
           self.root = MinimaxNode(0,0)
       
       def expected_minimax(self):
-          best_col, util = self.expected_minimax_util(node_type=NodeType.MIN, layer=0, depth=self.depth, last_col=None, board=self.board)
+          best_col, util = self.expected_minimax_util(node_type=NodeType.MIN, layer=0, depth=self.depth, last_col=None, board=self.board, parent_node=self.root)
           return best_col, util, self.root
 
-      def expected_minimax_util(self, node_type: NodeType, layer=0, depth=0, last_col=None, board=None):
+      def expected_minimax_util(self, node_type: NodeType, layer=0, depth=0, last_col=None, board=None, parent_node=None):
           valid_cols = board.get_valid_cols()
           is_terminal = board.is_terminal_node()
           if depth == 0 or is_terminal:
@@ -24,15 +24,14 @@ class ExpectedMinimax:
                 return None, player1_score - player2_score
           
           current_node = MinimaxNode(0,layer)
+          parent_node.add_child(current_node)
 
           if node_type == NodeType.MAX:
               best_col, max_util = None, -math.inf
               for col in valid_cols:
                   child_board = board.copy() 
                   # child_board.add_piece(col)
-                  child_node = MinimaxNode(0,layer+1)
-                  current_node.add_child(child_node)
-                  _, util = self.expected_minimax_util(node_type=NodeType.CHANCE_MAX, layer=layer+1, depth=depth-1, last_col=col, board=child_board)
+                  _, util = self.expected_minimax_util(node_type=NodeType.CHANCE_MAX, layer=layer+1, depth=depth-1, last_col=col, board=child_board, parent_node=current_node)
                   if util > max_util:
                       best_col, max_util = col, util
                   current_node.score = max_util
@@ -43,9 +42,7 @@ class ExpectedMinimax:
               for col in valid_cols:
                   child_board = board.copy() 
                   # child_board.add_piece(col)
-                  child_node = MinimaxNode(0,layer+1)
-                  current_node.add_child(child_node)
-                  _, util = self.expected_minimax_util(node_type=NodeType.CHANCE_MIN, layer=layer+1, depth=depth-1, last_col=col, board=child_board)
+                  _, util = self.expected_minimax_util(node_type=NodeType.CHANCE_MIN, layer=layer+1, depth=depth-1, last_col=col, board=child_board, parent_node=current_node)
                   if util < min_util:
                       best_col, min_util = col, util
                   current_node.score = min_util
@@ -57,9 +54,7 @@ class ExpectedMinimax:
               for col in valid_cols:
                   child_board = board.copy() 
                   child_board.add_piece(col)
-                  child_node = MinimaxNode(0,layer+1)
-                  current_node.add_child(child_node)
-                  _, util = self.expected_minimax_util(node_type=(NodeType.MIN if node_type == NodeType.CHANCE_MAX else NodeType.MAX), layer=layer+1, depth=depth-1, board=child_board)
+                  _, util = self.expected_minimax_util(node_type=(NodeType.MIN if node_type == NodeType.CHANCE_MAX else NodeType.MAX), layer=layer+1, depth=depth-1, board=child_board, parent_node=current_node)
                   valid_cols_scores.append(util)
               util = 0
               for col, score in zip(valid_cols, valid_cols_scores):
