@@ -124,6 +124,14 @@ class Board:
   
   def copy(self):
     return copy.deepcopy(self)
+
+  def remove_piece(self,col):
+    for i in range(0,self.height):
+      if(self.board[i][col] != Turn.NONE):
+        self.board[i][col] = Turn.NONE
+        self.turn = Turn.HUMAN if self.turn == Turn.AI else Turn.AI
+        break
+    return
          
   
 if __name__ == "__main__":
