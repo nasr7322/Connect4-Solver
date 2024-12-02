@@ -63,7 +63,8 @@ class MinimaxTree:
             canvas.create_line(
                 positions[node][0], positions[node][1],
                 positions[child][0], positions[child][1],
-                fill="black"
+                fill="black",
+                
             )
             self.draw_tree(canvas, child, positions)
 
@@ -96,18 +97,19 @@ class MinimaxTree:
         # Create Tkinter window
         window = tk.Tk()
         window.title("Minimax Tree Visualization")
-
+        window.configure(bg="#FFFFFF")
+        
         # Scrollbar configuration
-        canvas_frame = tk.Frame(window)
-        canvas_frame.pack(fill=tk.BOTH, expand=True)
+        canvas = tk.Canvas(window, bg="white")
+        canvas.pack(fill=tk.BOTH, expand=True)
 
-        h_scrollbar = tk.Scrollbar(canvas_frame, orient=tk.HORIZONTAL)
+        h_scrollbar = tk.Scrollbar(canvas, orient=tk.HORIZONTAL)
         h_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
 
-        v_scrollbar = tk.Scrollbar(canvas_frame, orient=tk.VERTICAL)
+        v_scrollbar = tk.Scrollbar(canvas, orient=tk.VERTICAL)
         v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        canvas = tk.Canvas(canvas_frame, bg="white",
+        canvas = tk.Canvas(canvas, bg="white",
                            xscrollcommand=h_scrollbar.set,
                            yscrollcommand=v_scrollbar.set)
 
