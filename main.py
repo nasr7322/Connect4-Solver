@@ -1,5 +1,5 @@
 ## Main file for the program
-
+from gui.main_menu import MainMenu
 def main():
     # Start the main menu and return the values of K, Ai, and startPlayer
     # start the game loop with given values
@@ -8,7 +8,10 @@ def main():
     # check for win after each turn
     # each turn the ai plays it should also open a gui window to draw minimax tree
     # if win, display the winner
-    pass
+    
+    main_menu = MainMenu()
+    main_menu.visualize()
+    
 
 
 if __name__ == "__main__":
