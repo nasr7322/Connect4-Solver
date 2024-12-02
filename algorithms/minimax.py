@@ -7,6 +7,7 @@ class Minimax:
         self.board = board
         self.depth = depth
         self.maximizing_player = maximizing_player
+        self.memory = {}
 
     def minimax_no_pruning(self):
         root = MinimaxNode(0, 0)
@@ -19,6 +20,12 @@ class Minimax:
         return best_col, util, root
 
     def minimax(self, depth, maximizing_player, alpha=-math.inf, beta=math.inf, pruning=True, parent_node:MinimaxNode=None, layer=0):
+        # print("Check", self.board.get_hash())
+        if self.board.get_hash() in self.memory:
+            # print("Memory hit")
+            # print(self.board.get_hash())
+            return self.memory[self.board.get_hash()]
+        
         valid_cols = self.board.get_valid_cols()
         is_terminal = self.board.is_terminal_node()
 
@@ -49,8 +56,9 @@ class Minimax:
                     alpha = max(alpha, max_util)
                     if alpha >= beta:
                         break
-
-            return best_col, max_util
+            # print("MAX", self.board.get_hash())
+            self.memory[self.board.get_hash()] = (best_col, max_util)
+            return self.memory[self.board.get_hash()]
 
         else:
             best_col, min_util = None, math.inf
@@ -74,5 +82,6 @@ class Minimax:
                     beta = min(beta, min_util)
                     if alpha >= beta:
                         break
-
-            return best_col, min_util
+            # print("MIN", self.board.get_hash())
+            self.memory[self.board.get_hash()] = (best_col, min_util)
+            return self.memory[self.board.get_hash()]

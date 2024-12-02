@@ -14,6 +14,7 @@ class Board:
     self.player_2_actual_score = 0
     self.player_2_heuristic_score = 0
     self.mode = mode
+    self.hashed = tuple([0] * self.width)
 
   def get_board(self):
     return self.board
@@ -24,6 +25,14 @@ class Board:
   def get_scores(self):
     return self.player_1_actual_score, self.player_2_actual_score
   
+  def get_hash(self):
+    # convert board to tuples
+    # print(self.hashed)
+    # for row in self.board:
+    #   print(row)
+
+    return (self.hashed)
+
   def get_heuristic_scores(self):
     return self.player_1_heuristic_score, self.player_2_heuristic_score
   
@@ -31,6 +40,7 @@ class Board:
     return self.turn
   
   def add_piece(self, col):
+
     valid_cols = [c for c in self.get_valid_cols() if abs(c - col) <= 1]
     if col not in valid_cols:
       return -1
@@ -49,6 +59,9 @@ class Board:
     for row in range(self.height):
       if (row + 1 == self.height or self.board[row + 1][col] != 0) and self.board[row][col] == 0:
         self.board[row][col] = self.turn
+        self.hashed = list(self.hashed)
+        self.hashed[col] += (3 ** row) * self.turn
+        self.hashed = tuple(self.hashed)
         self.turn = 2 if self.turn == 1 else 1
         self.update_scores()
         self.remaining_moves -= 1
@@ -126,6 +139,9 @@ class Board:
         self.board[i][col] = 0
         self.remaining_moves += 1
         self.turn = 2 if self.turn == 1 else 1
+        self.hashed = list(self.hashed)
+        self.hashed[col] -= (3 ** i) * self.turn
+        self.hashed = tuple(self.hashed)
         break
     return
          
