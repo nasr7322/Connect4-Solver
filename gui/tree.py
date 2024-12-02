@@ -39,22 +39,24 @@ class MinimaxTree:
         return root
     
     # Function to calculate node positions
-    def calculate_positions(self, node, depth, x, y, y_step, positions, count, max_width):
+    def calculate_positions(self, node, depth, x, y, y_step, positions, max_width):
         # Store the position of the current node
         positions[node] = (x, y)
         
         if not node.children:
             return
         
-        child_y = y + y_step
-        y_step *= 0.8
-        x_step = max_width / (pow(self.branching_factor, depth + 1) + 1)
-        child_x = x_step * count[depth + 1]
+        # Calculate available width for child nodes
+        total_children = len(node.children)
+        total_spacing = max_width / pow(self.branching_factor, depth + 1)
+        start_x = x - (total_children - 1) * total_spacing / 2
+
+        for i, child in enumerate(node.children):
+            child_x = start_x + i * total_spacing
+            child_y = y + y_step
+            self.calculate_positions(child, depth + 1, child_x, child_y, y_step, positions, max_width)
+
         
-        for child in node.children:
-            self.calculate_positions(child, depth + 1, child_x, child_y, y_step, positions, count, max_width)
-            child_x += x_step
-            count[depth + 1] += 1
 
     # Function to draw the tree on the Tkinter Canvas
     def draw_tree(self, canvas, node, positions):
@@ -128,7 +130,7 @@ class MinimaxTree:
         
         count = [1] * (max_depth + 1)  # count of nodes at each depth
         
-        self.calculate_positions(root, 0, start_x, start_y, y_step, positions, count, max_width)
+        self.calculate_positions(root, 0, start_x, start_y, y_step, positions, max_width)
 
         # Determine canvas size
         all_x = [pos[0] for pos in positions.values()]
@@ -158,5 +160,5 @@ class MinimaxTree:
 
 if __name__ == "__main__":
     # Initialize and start GUI
-    tree = MinimaxTree(4, 7)
+    tree = MinimaxTree(2, 7)
     tree.visualize()
