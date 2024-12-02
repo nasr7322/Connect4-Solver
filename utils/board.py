@@ -45,7 +45,6 @@ class Board:
         col -= 1
       elif thresh_left < rand_sample <= thresh_right:
         col += 1
-      print("COl: ", col, "Player: ", self.turn)
 
     for row in range(self.height):
       if (row + 1 == self.height or self.board[row + 1][col] != 0) and self.board[row][col] == 0:
