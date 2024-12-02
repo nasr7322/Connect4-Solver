@@ -83,7 +83,8 @@ class Board:
   def update_heuristic(self):
     self.player_1_heuristic_score = 0
     self.player_2_heuristic_score = 0
-    directions = [(0, 1), (1, 0), (1, 1), (1, -1)] # right, down, diagonal right, diagonal left
+    # right, left, down, up, right-down, left-up, right-up, left-down
+    directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (1, -1), (-1, 1)]
     for row in range(self.height):
       for col in range(self.width):
         for dr, dc in directions:
