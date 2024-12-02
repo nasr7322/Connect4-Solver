@@ -4,7 +4,7 @@ import random
 from .enums import Turn, Mode
 
 class Board:
-  def __init__(self, width=7, height=6, turn=Turn.AI, mode=Mode.MINIMAX):
+  def __init__(self, width=7, height=6, turn=Turn.HUMAN, mode=Mode.MINIMAX):
     self.width = width
     self.height = height
     self.board = [[Turn.NONE for _ in range(width)] for _ in range(height)]
@@ -28,7 +28,7 @@ class Board:
     return self.player_1_heuristic_score, self.player_2_heuristic_score
   
   def get_player_turn(self):
-    return self.turn == Turn.AI
+    return self.turn
   
   def add_piece(self, col):
     valid_cols = [c for c in self.get_valid_cols() if abs(c - col) <= 1]
@@ -94,15 +94,13 @@ class Board:
             current_y = row + dr * piece
             if not (0 <= current_x < self.width and 0 <= current_y < self.height and self.board[current_y][current_x] == current_player):
               break
-            score *= 2
-          score /= 2
+            score *= 4
+          score /= 4
 
           if current_player == Turn.AI:
             self.player_1_heuristic_score += score
           elif current_player == Turn.HUMAN:
             self.player_2_heuristic_score += score
-          print(current_player, score, f"{dr},{dc}")
-        print(row, col, self.player_1_heuristic_score, self.player_2_heuristic_score)
 
 
         

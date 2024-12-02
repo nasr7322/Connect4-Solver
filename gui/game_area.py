@@ -30,6 +30,7 @@ class GameArea:
         player_1_score, player_2_score = self.board.get_scores()
         self.canvas.itemconfig(self.score1, text="Score: " + str(player_1_score))
         self.canvas.itemconfig(self.score2, text="Score: " + str(player_2_score))
+        print(self.board.get_heuristic_scores())
 
     def draw_piece(self, col, row, player=None):
         if player == Turn.NONE:
