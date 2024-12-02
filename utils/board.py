@@ -144,6 +144,37 @@ class Board:
         self.hashed = tuple(self.hashed)
         break
     return
+
+  @classmethod
+  def get_board_heuristic(cls, board:list[list[int]]):
+    player_1_heuristic_score = 0
+    player_2_heuristic_score = 0
+    # right, left, down, up, right-down, left-up, right-up, left-down
+    directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (1, -1), (-1, 1)]
+    height = len(board)
+    width = len(board[0])
+    for row in range(height):
+      for col in range(width):
+        for dr, dc in directions:
+          current_player = board[row][col]
+          score = 1
+          for piece in range(4):
+            current_x = col + dc * piece
+            current_y = row + dr * piece
+            if not (0 <= current_x < width and 0 <= current_y < height):
+              score = 0
+              break
+            if board[current_y][current_x] != current_player:
+              score = 0 if board[current_y][current_x] != 0 else score
+              break
+            score *= 4
+          score /= 4
+
+          if current_player == 1:
+            player_1_heuristic_score += score
+          elif current_player == 2:
+            player_2_heuristic_score += score
+    return player_1_heuristic_score - player_2_heuristic_score
          
   
 if __name__ == "__main__":
