@@ -64,14 +64,13 @@ class MinimaxTree:
                 positions[node][0], positions[node][1],
                 positions[child][0], positions[child][1],
                 fill="black",
-                
             )
             self.draw_tree(canvas, child, positions)
 
         # Draw the node
         x, y = positions[node]
         size = 12.5
-        fill_color = "red" if node.score < 0 else "green" if node.score > 0 else "gray"
+        fill_color = "#D01466" if node.score < 0 else "#FF9D00" if node.score > 0 else "gray"
 
         if node.layer % 2 == 0:  # AI layer (circle)
             canvas.create_oval(
@@ -81,7 +80,7 @@ class MinimaxTree:
         else:  # Human layer (square)
             canvas.create_rectangle(
                 x - size, y - size, x + size, y + size,
-                fill=fill_color, outline=fill_color
+                fill = fill_color, outline = fill_color
             )
 
         # Draw the score inside the node
@@ -125,7 +124,7 @@ class MinimaxTree:
         positions = {}
         start_y = 50
         start_x = max_width / 2
-        y_step = 150
+        y_step = 300
         
         count = [1] * (max_depth + 1)  # count of nodes at each depth
         
@@ -137,13 +136,22 @@ class MinimaxTree:
 
         air_gap = 50
         min_width = 800
-        min_height = 600
+        min_height = 800
         canvas_width = max(min_width, max(all_x) + air_gap)
         canvas_height = max(min_height, max(all_y) + air_gap)
         canvas.config(width=min_width, height=min_height, scrollregion=(0, 0, canvas_width, canvas_height))
 
         # Draw the tree
         self.draw_tree(canvas, root, positions)
+
+        # Zoom function
+        def zoom(event):
+            scale = 1.1 if event.delta > 0 else 0.9
+            canvas.scale("all", event.x, event.y, scale, scale)
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        # Bind the mouse wheel to the zoom function
+        canvas.bind("<MouseWheel>", zoom)
 
         # Start the Tkinter event loop
         window.mainloop()
