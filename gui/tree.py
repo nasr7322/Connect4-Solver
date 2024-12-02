@@ -84,7 +84,7 @@ class MinimaxTree:
             )
 
         # Draw the score inside the node
-        canvas.create_text(x, y, text=str(node.score), fill="white", font=("Arial", 10))
+        canvas.create_text(x, y, text=str(round(node.score)), fill="white", font=("Arial", 10))
 
     def visualize(self):
         # Set the parameters for the tree
