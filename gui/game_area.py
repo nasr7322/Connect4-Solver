@@ -27,6 +27,7 @@ class GameArea:
         self.mode = mode # 0 normal minimax, 1 alpha-beta, 2 expected minimax
         self.k_levels = k_levels # k is the depth of the minimax tree
         self.board = Board(7,6,initial_player, mode=self.mode) # 1 for player 1 (AI), 2 for player 2 (Human)
+        self.last_tree = None
 
     def update_gui(self):
         self.canvas.itemconfig(self.turn_indicator, text="Player " + str(self.board.get_player_turn()) + " ‘s turn")
@@ -74,6 +75,11 @@ class GameArea:
         print(f"Player 2 Score: {player2_score}")
         self.window.destroy()
 
+    def show_last_tree(self):
+        if self.last_tree is None:
+            print("No minimax tree to show.")
+        else:
+            self.last_tree.visualize()
             
     def ai_move(self):
         start_time = time.time()
@@ -96,8 +102,7 @@ class GameArea:
             row = self.board.add_piece(best_col)
             self.draw_piece(best_col, row, 1)
             self.update_gui()
-            #   minimax_tree = MinimaxTree(self.k_levels,self.board.width,root)
-            #   minimax_tree.visualize()
+            self.last_tree = MinimaxTree(self.k_levels,self.board.width,root)
             if self.board.is_terminal_node():
                 self.end_game()
         print("Time taken: ", time.time() - start_time)
@@ -204,6 +209,8 @@ class GameArea:
             flag_x2=800.0,
             anchor="ne"
         )
+        
+        
 
         button_image = PhotoImage(file=relative_to_assets("button.png"))
         # Coordinates for the buttons
@@ -229,6 +236,20 @@ class GameArea:
             )
             buttons.append(button)
 
+        # Add button to show the last minimax tree
+        show_tree_button = Button(
+            window,
+            text="Show Last Minimax Tree",
+            command=self.show_last_tree,
+            relief="flat"
+        )
+        show_tree_button.place(
+            x=350,
+            y=450,
+            width=150,
+            height=30
+        )
+    
         window.resizable(False, False)
         if(self.board.get_player_turn() == 1):
             self.ai_move()
@@ -238,3 +259,4 @@ class GameArea:
 if __name__ == "__main__":
     game_area = GameArea(initial_player=2)
     game_area.visualize()
+    
