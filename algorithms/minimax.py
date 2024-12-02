@@ -1,9 +1,9 @@
 import math
 import time
 from gui.tree import MinimaxNode
-
+from utils.board import Board
 class Minimax:
-    def __init__(self, board, depth, maximizing_player):
+    def __init__(self, board: Board, depth, maximizing_player):
         self.board = board
         self.depth = depth
         self.maximizing_player = maximizing_player
@@ -18,7 +18,7 @@ class Minimax:
         best_col, util = self.minimax(self.depth, self.maximizing_player, pruning=True, parent_node=root, layer=0)
         return best_col, util, root
 
-    def minimax(self, depth, maximizing_player, alpha=-math.inf, beta=math.inf, pruning=True, parent_node=None, layer=0):
+    def minimax(self, depth, maximizing_player, alpha=-math.inf, beta=math.inf, pruning=True, parent_node:MinimaxNode=None, layer=0):
         valid_cols = self.board.get_valid_cols()
         is_terminal = self.board.is_terminal_node()
 
