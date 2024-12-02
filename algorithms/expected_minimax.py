@@ -72,6 +72,7 @@ class ExpectedMinimax:
                   else:
                       weight = 0.4 / (len(valid_cols) - 1)
                   util += weight * score
+              parent_node.score = util
               self.memory[(board.get_hash(), node_type, last_col)] = (None, util)
               return None, util
 
