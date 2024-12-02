@@ -1,5 +1,5 @@
 import math
-from gui.Tree import MinimaxNode
+from gui.tree import MinimaxNode
 class Minimax:
     
     @classmethod
@@ -20,8 +20,9 @@ class Minimax:
         is_terminal = board.is_terminal_node()
 
         if depth == 0 or is_terminal:
-            player1_score, player2_score = board.get_scores()
-            return None, player1_score - player2_score
+            player1_score, player2_score = board.get_heuristic_scores()
+            parent_node.score = player1_score - player2_score
+            return None, parent_node.score
         
         #maxmize the score
         if maximizing_player:
