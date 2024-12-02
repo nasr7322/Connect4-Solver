@@ -145,6 +145,7 @@ class MinimaxTree:
         # Start the Tkinter event loop
         window.mainloop()
 
-# Initialize and start GUI
-tree = MinimaxTree(4, 7)
-tree.visualize()
+if __name__ == "__main__":
+    # Initialize and start GUI
+    tree = MinimaxTree(4, 7)
+    tree.visualize()

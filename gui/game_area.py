@@ -3,6 +3,7 @@ from tkinter import Tk, Canvas, Button, PhotoImage
 
 from utils.board import Board
 from utils.enums import Turn, Mode
+from algorithms.expected_minimax import ExpectedMinimax
 
 ASSETS_PATH = "assets/GameArea"
 
@@ -10,7 +11,7 @@ def relative_to_assets(path: str) -> Path:
     return Path(ASSETS_PATH) / Path(path)
 
 class GameArea:
-    def __init__(self, initial_player, mode="minimax", k_levels=4):
+    def __init__(self, initial_player, mode=0, k_levels=4):
         self.canvas = None
         self.yellow_piece = None
         self.red_piece = None
@@ -18,7 +19,9 @@ class GameArea:
         self.turn_flag = None
         self.score1 = None
         self.score2 = None
-        self.board = Board(turn=Turn.from_int(initial_player), mode=Mode.from_int(mode), k_levels=k_levels)
+        self.mode=Mode.from_int(mode)
+        self.k_levels = k_levels
+        self.board = Board(turn=Turn.from_int(initial_player), mode=self.mode)
 
     def update_gui(self):
         self.draw_board()
@@ -48,9 +51,21 @@ class GameArea:
             # TODO: display error message
             return
         self.update_gui()
-        self.board.ai_move()
+        self.ai_move()
         self.update_gui()
             
+    def ai_move(self):
+      if self.mode == Mode.MINIMAX:
+        pass
+      elif self.mode == Mode.PRUNING_MINIMAX:
+        pass
+      elif self.mode == Mode.EXPECTED_MINIMAX:
+        expected_minimax = ExpectedMinimax(self.board, self.k_levels)
+        best_col, util = expected_minimax.expected_minimax()
+        print("AI Utility: ", util)
+        print("AI Best Move: ", best_col)
+        self.board.add_piece(best_col)
+
     def create_player_data(self, name, score, color, name_x, score_x, flag_x1, flag_x2, anchor="nw"):
         self.canvas.create_text(
             name_x,

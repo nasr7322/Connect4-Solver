@@ -1,17 +1,19 @@
 import copy
+import random
+
 from .enums import Turn, Mode
+
 class Board:
-  def __init__(self, width=7, height=6, turn=Turn.AI, mode=Mode.MINIMAX, k_levels=4):
+  def __init__(self, width=7, height=6, turn=Turn.AI, mode=Mode.MINIMAX):
     self.width = width
     self.height = height
     self.board = [[Turn.NONE for _ in range(width)] for _ in range(height)]
     self.turn = turn
-    self.mode = mode
-    self.k_levels = k_levels
     self.player_1_actual_score = 0
     self.player_1_heuristic_score = 0
     self.player_2_actual_score = 0
     self.player_2_heuristic_score = 0
+    self.mode = mode
 
   def get_board(self):
     return self.board
@@ -27,17 +29,24 @@ class Board:
   
   def get_player_turn(self):
     return self.turn == Turn.AI
-
-  def ai_move(self):
-    if self.mode == Mode.MINIMAX:
-      pass
-    elif self.mode == Mode.PRUNING_MINIMAX:
-      pass
-    elif self.mode == Mode.EXPECTED_MINIMAX:
-      pass
-    pass
   
   def add_piece(self, col):
+    valid_cols = [c for c in self.get_valid_cols() if abs(c - col) <= 1]
+    if col not in valid_cols:
+      return False
+    
+    if self.mode == Mode.EXPECTED_MINIMAX:
+      thresh_target = 60 + (40 if len(valid_cols) == 1 else 0)
+      thresh_left = (40 / (len(valid_cols)-1) + thresh_target) if (col-1) in valid_cols else thresh_target
+      thresh_right = 40 / (len(valid_cols)-1) + thresh_left if (col+1) in valid_cols else thresh_left
+
+      rand_sample = random.randint(0, 100)
+      print(rand_sample, thresh_target, thresh_left, thresh_right)
+      if thresh_target < rand_sample < thresh_left:
+        col -= 1
+      elif thresh_left < rand_sample < thresh_right:
+        col += 1
+
     for row in range(self.height):
       if (row + 1 == self.height or self.board[row + 1][col] != Turn.NONE) and self.board[row][col] == Turn.NONE:
         self.board[row][col] = self.turn
@@ -101,14 +110,14 @@ class Board:
   def get_valid_cols(self):
     valid_cols = []
     for col in range(0,self.width):
-      if self.board[0][col] == 0:
+      if self.board[0][col] == Turn.NONE:
         valid_cols.append(col)
 
     return valid_cols
   
   def is_terminal_node(self):
     for col in range(0,self.width):
-      if self.board[0][col] == 0:
+      if self.board[0][col] == Turn.NONE:
         return False      
     return True
   

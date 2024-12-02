@@ -129,9 +129,11 @@ class MainMenu:
 
         ## text area for the user to enter a variable K
         self.entry_k = self.create_entry_with_label(335.0, 315.0, "Enter K:")
+        self.entry_k.insert(0, "4")
 
         ## text area for the user to the starting player
         self.entry_starter = self.create_entry_with_label(335.0, 345.0, "Starting:")
+        self.entry_starter.insert(0, "1")
         
         self.window.resizable(False, False)
         self.window.mainloop()
