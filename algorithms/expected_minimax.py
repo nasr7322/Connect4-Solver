@@ -11,7 +11,7 @@ class ExpectedMinimax:
       
       def expected_minimax(self):
           best_col, util = self.expected_minimax_util(node_type=NodeType.MIN, layer=0, depth=self.depth, last_col=None, board=self.board)
-          return best_col, util
+          return best_col, util, self.root
 
       def expected_minimax_util(self, node_type: NodeType, layer=0, depth=0, last_col=None, board=None):
           valid_cols = board.get_valid_cols()
