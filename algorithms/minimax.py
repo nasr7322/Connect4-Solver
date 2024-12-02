@@ -1,17 +1,18 @@
 import math
 from gui.tree import MinimaxNode
+
 class Minimax:
     
     @classmethod
-    def minimax_no_pruning(self, board, depth, maximazing_player):
+    def minimax_no_pruning(self, board, depth, maximizing_player):
         root = MinimaxNode(0,0)
-        best_col, util = self.minimax(board,depth,maximazing_player,pruning=False,parent_node=root,layer=0)
+        best_col, util = self.minimax(board, depth, maximizing_player, pruning=False, parent_node=root, layer=0)
         return best_col, util, root
 
     @classmethod
-    def minimax_pruning(self, board, depth, maximazing_player):
+    def minimax_pruning(self, board, depth, maximizing_player):
         root = MinimaxNode(0,0)
-        best_col, util= self.minimax(board,depth,maximazing_player,pruning=True,parent_node=root,layer=0)
+        best_col, util = self.minimax(board, depth, maximizing_player, pruning=True, parent_node=root, layer=0)
         return best_col, util, root
 
     @classmethod
@@ -23,19 +24,21 @@ class Minimax:
             player1_score, player2_score = board.get_scores()
             return None, player1_score - player2_score
         
-        #maxmize the score
+        # maximize the score
         if maximizing_player:
             best_col, max_util = None, -math.inf
 
             for col in valid_col:
                 child_board = board.copy() 
                 child_board.add_piece(col)
-                child_node = MinimaxNode(0,layer+1)
+                child_node = MinimaxNode(0, layer+1)
                 parent_node.add_child(child_node)
 
                 _, util = self.minimax(board=child_board,
                                        depth=depth-1,
                                        maximizing_player=False,
+                                       alpha=alpha,
+                                       beta=beta,
                                        pruning=pruning,
                                        parent_node=child_node,
                                        layer=layer+1)
@@ -47,27 +50,27 @@ class Minimax:
                 parent_node.best_move = best_col
 
                 if pruning:
-                    print("bonk")
                     alpha = max(alpha, max_util)
-
                     if alpha >= beta:
                         break
 
             return best_col, max_util
 
-        #minimize the score
+        # minimize the score
         else:
             best_col, min_util = None, math.inf
 
             for col in valid_col:
                 child_board = board.copy() 
                 child_board.add_piece(col)
-                child_node = MinimaxNode(0,layer+1)
+                child_node = MinimaxNode(0, layer+1)
                 parent_node.add_child(child_node)
                 
                 _, util = self.minimax(board=child_board,
                                        depth=depth-1,
                                        maximizing_player=True,
+                                       alpha=alpha,
+                                       beta=beta,
                                        pruning=pruning,
                                        parent_node=child_node,
                                        layer=layer+1)
@@ -79,14 +82,8 @@ class Minimax:
                 parent_node.best_move = best_col
 
                 if pruning:
-                    print("bonk")
-                    beta = min(beta,min_util)
-
+                    beta = min(beta, min_util)
                     if alpha >= beta:
                         break
 
             return best_col, min_util
-           
-            
-
-
