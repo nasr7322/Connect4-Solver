@@ -37,14 +37,22 @@ class GameArea:
         print(self.board.get_heuristic_scores())
 
     def draw_piece(self, col, row, player=None):
+        if player == 0:
+            return
         self.canvas.create_image(
             270 + 43 * col,
             185 + 43 * row,
             image=self.yellow_piece if player == 1 else self.red_piece,
         )
 
+    def draw_board(self):
+        for row in range(6):
+            for col in range(7):
+                self.draw_piece(col, row, self.board.get_cell(row, col))
+
     def insert_piece(self, col):
-        row = self.board.add_piece(col)
+        print("Add to column:", col)
+        col, row = self.board.add_piece(col)
         if row == -1:
             print("Invalid move")
             return
@@ -97,8 +105,8 @@ class GameArea:
         print("AI Utility: ", util)
         print("AI Best Move: ", best_col)
         if best_col is not None:
-            row = self.board.add_piece(best_col)
-            self.draw_piece(best_col, row, 1)
+            col, row = self.board.add_piece(best_col)
+            self.draw_piece(col, row, 1)
             self.update_gui()
             self.last_tree = MinimaxTree(self.k_levels,self.board.width,root)
             if self.board.is_terminal_node():

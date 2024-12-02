@@ -31,7 +31,7 @@ class Board:
     return self.turn
   
   def add_piece(self, col):
-    valid_cols = self.get_valid_cols()
+    valid_cols = [c for c in self.get_valid_cols() if abs(c - col) <= 1]
     if col not in valid_cols:
       return -1
     
@@ -41,10 +41,11 @@ class Board:
       thresh_right = 40 / (len(valid_cols)-1) + thresh_left if (col+1) in valid_cols else thresh_left
 
       rand_sample = random.randint(0, 100)
-      if thresh_target < rand_sample < thresh_left:
+      if thresh_target < rand_sample <= thresh_left:
         col -= 1
-      elif thresh_left < rand_sample < thresh_right:
+      elif thresh_left < rand_sample <= thresh_right:
         col += 1
+      print("COl: ", col, "Player: ", self.turn)
 
     for row in range(self.height):
       if (row + 1 == self.height or self.board[row + 1][col] != 0) and self.board[row][col] == 0:
@@ -52,8 +53,8 @@ class Board:
         self.turn = 2 if self.turn == 1 else 1
         self.update_scores()
         self.remaining_moves -= 1
-        return row
-    return -1
+        return col, row
+    return -1, -1
   
   def update_scores(self):
     self.update_heuristic()
