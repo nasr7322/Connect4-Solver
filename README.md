@@ -6,7 +6,7 @@ This project implements a Connect 4 game with an AI player that can be configure
 
 ## Features
 
-- **Two-player game** (Human vs AI or Human vs Human).
+- **Two-player game** (Human vs AI).
 - **AI modes:**
     - **Minimax**: Standard decision-making where the AI maximizes its score and minimizes the opponent’s score.
     - **Pruning Minimax (Alpha-Beta Pruning)**: Optimized version of Minimax to reduce the search space.
