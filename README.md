@@ -79,7 +79,7 @@ This project implements a Connect 4 game with an AI player that can be configure
 
 ![image.png](assets/images/image%208.png)
 
-*Zoom in example
+*Zoom in - example
 
 ## Comparison Between Minimax Pruning & Expected Minimax
 
