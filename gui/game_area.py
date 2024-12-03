@@ -1,3 +1,4 @@
+import math
 import time
 
 from pathlib import Path
@@ -9,6 +10,7 @@ from algorithms.minimax import Minimax
 from gui.tree import MinimaxTree
 
 ASSETS_PATH = "assets/GameArea"
+MOVES = 21
 
 def relative_to_assets(path: str) -> Path:
     return Path(ASSETS_PATH) / Path(path)
@@ -29,6 +31,8 @@ class GameArea:
         self.last_tree = None
         self.total_time_for_agent = 0
         self.total_expanded_nodes = 0
+        self.min_move_time = float(math.inf)
+        self.max_move_time = float(-math.inf)
 
 
     def update_gui(self):
@@ -79,12 +83,16 @@ class GameArea:
         else:
             winner = "It's a tie"
         
+        print("--------------------------------------------------------------")
         print(f"Game over. {winner} wins!")
         print(f"Player 1 Score: {player1_score}")
         print(f"Player 2 Score: {player2_score}")
-        print(f"Total time taken by ai agent: {self.total_time_for_agent}")
-        print(f"Avg. time taken by ai agent: {self.total_time_for_agent/18}")
         print(f"Total number of node expanded: {self.total_expanded_nodes}")
+        print(f"Total time taken by ai agent: {self.total_time_for_agent}")
+        print(f"Avg. time taken by ai agent: {self.total_time_for_agent/MOVES}")
+        print(f"Min. move time: {self.min_move_time}")
+        print(f"Max. move time: {self.max_move_time}")
+        print("--------------------------------------------------------------")
         self.window.destroy()
 
     def show_last_tree(self):
@@ -128,8 +136,11 @@ class GameArea:
         move_time = time.time() - start_time
         self.total_time_for_agent += move_time
         self.total_expanded_nodes += move_expanded_nodes
+        self.min_move_time = min(self.min_move_time, move_time)
+        self.max_move_time = max(self.max_move_time, move_time)
         print("Time taken: ", move_time)
         print("Node expanded: ", move_expanded_nodes)
+        print("|------------------------------------|")
 
     def create_player_data(self, name, score, color, name_x, score_x, flag_x1, flag_x2, anchor="nw"):
         self.canvas.create_text(
