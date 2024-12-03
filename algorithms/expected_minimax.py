@@ -9,6 +9,7 @@ class ExpectedMinimax:
           self.depth = depth
           self.root = MinimaxNode(0,0)
           self.memory = {}
+          self.node_expanded = 0
       
       def expected_minimax(self):
           best_col, util = self.expected_minimax_util(node_type=NodeType.MIN, layer=0, depth=self.depth, last_col=None, board=self.board, parent_node=self.root)
@@ -20,6 +21,9 @@ class ExpectedMinimax:
           
           valid_cols = board.get_valid_cols()
           is_terminal = board.is_terminal_node()
+
+          self.node_expanded += 1
+
           if depth == 0 or is_terminal:
               if depth == 0 and (node_type == NodeType.CHANCE_MIN or node_type == NodeType.CHANCE_MAX):
                   depth += 1

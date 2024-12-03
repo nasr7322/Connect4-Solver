@@ -1,3 +1,4 @@
+import math
 import time
 
 from pathlib import Path
@@ -9,6 +10,7 @@ from algorithms.minimax import Minimax
 from gui.tree import MinimaxTree
 
 ASSETS_PATH = "assets/GameArea"
+MOVES = 21
 
 def relative_to_assets(path: str) -> Path:
     return Path(ASSETS_PATH) / Path(path)
@@ -27,6 +29,11 @@ class GameArea:
         self.k_levels = k_levels # k is the depth of the minimax tree
         self.board = Board(7,6,initial_player, mode=self.mode) # 1 for player 1 (AI), 2 for player 2 (Human)
         self.last_tree = None
+        self.total_time_for_agent = 0
+        self.total_expanded_nodes = 0
+        self.min_move_time = float(math.inf)
+        self.max_move_time = float(-math.inf)
+
 
     def update_gui(self):
         self.canvas.itemconfig(self.turn_indicator, text="Player " + str(self.board.get_player_turn()) + " ‘s turn")
@@ -76,9 +83,16 @@ class GameArea:
         else:
             winner = "It's a tie"
         
+        print("--------------------------------------------------------------")
         print(f"Game over. {winner} wins!")
         print(f"Player 1 Score: {player1_score}")
         print(f"Player 2 Score: {player2_score}")
+        print(f"Total number of node expanded: {self.total_expanded_nodes}")
+        print(f"Total time taken by ai agent: {self.total_time_for_agent}")
+        print(f"Avg. time taken by ai agent: {self.total_time_for_agent/MOVES}")
+        print(f"Min. move time: {self.min_move_time}")
+        print(f"Max. move time: {self.max_move_time}")
+        print("--------------------------------------------------------------")
         self.window.destroy()
 
     def show_last_tree(self):
@@ -92,18 +106,22 @@ class GameArea:
         best_col = None
         row = None
         minimax_tree = None
+        move_expanded_nodes = 0
         if self.mode == 0:
             minimax = Minimax(self.board, self.k_levels, self.board.get_player_turn() == 1)
             best_col, util, root = minimax.minimax_no_pruning()
             self.last_tree = MinimaxTree(self.k_levels,self.board.width,1,root)
+            move_expanded_nodes += minimax.node_expanded
         elif self.mode == 1:
             minimax = Minimax(self.board, self.k_levels, self.board.get_player_turn() == 1)
             best_col, util, root = minimax.minimax_pruning()
             self.last_tree = MinimaxTree(self.k_levels,self.board.width,1,root)
+            move_expanded_nodes += minimax.node_expanded
         elif self.mode == 2:
             expected_minimax = ExpectedMinimax(self.board, self.k_levels)
             best_col, util, root = expected_minimax.expected_minimax()
             self.last_tree = MinimaxTree(self.k_levels,self.board.width,2,root)
+            move_expanded_nodes += expected_minimax.node_expanded
 
         print("AI Utility: ", util)
         print("AI Best Move: ", best_col)
@@ -114,7 +132,15 @@ class GameArea:
 
             if self.board.is_terminal_node():
                 self.end_game()
-        print("Time taken: ", time.time() - start_time)
+
+        move_time = time.time() - start_time
+        self.total_time_for_agent += move_time
+        self.total_expanded_nodes += move_expanded_nodes
+        self.min_move_time = min(self.min_move_time, move_time)
+        self.max_move_time = max(self.max_move_time, move_time)
+        print("Time taken: ", move_time)
+        print("Node expanded: ", move_expanded_nodes)
+        print("|------------------------------------|")
 
     def create_player_data(self, name, score, color, name_x, score_x, flag_x1, flag_x2, anchor="nw"):
         self.canvas.create_text(
