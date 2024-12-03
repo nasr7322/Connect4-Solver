@@ -121,7 +121,7 @@ class GameArea:
             expected_minimax = ExpectedMinimax(self.board, self.k_levels)
             best_col, util, root = expected_minimax.expected_minimax()
             self.last_tree = MinimaxTree(self.k_levels,self.board.width,2,root)
-            move_expanded_nodes += minimax.node_expanded
+            move_expanded_nodes += expected_minimax.node_expanded
 
         print("AI Utility: ", util)
         print("AI Best Move: ", best_col)
