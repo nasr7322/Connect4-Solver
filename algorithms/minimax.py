@@ -8,6 +8,7 @@ class Minimax:
         self.depth = depth
         self.maximizing_player = maximizing_player
         self.memory = {}
+        self.node_expanded = 0
 
     def minimax_no_pruning(self):
         root = MinimaxNode(0, 0)
@@ -28,6 +29,8 @@ class Minimax:
         
         valid_cols = self.board.get_valid_cols()
         is_terminal = self.board.is_terminal_node()
+
+        self.node_expanded += 1
 
         if depth == 0 or is_terminal:
             player1_score, player2_score = self.board.get_heuristic_scores()
