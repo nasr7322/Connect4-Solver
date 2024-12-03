@@ -86,7 +86,15 @@ class MinimaxTree:
             3: "#14D0AA",  # AI probability node (dashed circle)
             4: "#AA9DFF",  # Player probability node (dashed square)
         }
-        fill_color = color_map.get(node.player, "gray")
+        if self.ai_mode != 2:
+            if (node.player % 2) == 1:
+                fill_color = color_map.get(1)
+            elif (node.player % 2) == 0:
+                fill_color = color_map.get(2)
+            else:
+                fill_color = 'gray'
+        else:
+            fill_color = color_map.get(node.player, "gray")
 
         if node.player == 1 or node.player == 3:  # AI or AI probability (circle)
             canvas.create_oval(
